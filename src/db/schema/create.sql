@@ -1,35 +1,56 @@
-DROP TABLE IF EXISTS available_interviewers CASCADE;
-DROP TABLE IF EXISTS interviews CASCADE;
-DROP TABLE IF EXISTS interviewers CASCADE;
-DROP TABLE IF EXISTS appointments CASCADE;
-DROP TABLE IF EXISTS days CASCADE;
+DROP TABLE IF EXISTS order_items CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS venues CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
-CREATE TABLE days (
-  id SERIAL PRIMARY KEY NOT NULL,
-  name VARCHAR(255) NOT NULL
+CREATE TABLE venues (
+  id serial PRIMARY KEY NOT NULL,
+  name varchar(100) NOT NULL,
+  description varchar(300),
+  capacity integer NOT NULL,
+  fee money NOT NULL
 );
 
-CREATE TABLE appointments (
-  id SERIAL PRIMARY KEY NOT NULL,
-  time VARCHAR(255) NOT NULL,
-  day_id INTEGER REFERENCES days(id) ON DELETE CASCADE
+CREATE TABLE events (
+  id serial PRIMARY KEY NOT NULL,
+  title varchar(100) UNIQUE NOT NULL,
+  description varchar(500) NOT NULL,
+  event_date date NOT NULL,
+  event_time time NOT NULL,
+  duration time NOT NULL,
+  venue int REFERENCES venues(id) NOT NULL,
+  total_issued int NOT NULL,
+  limit_per_user smallint,
+  price money NOT NULL
 );
 
-CREATE TABLE interviewers (
-  id SERIAL PRIMARY KEY NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  avatar VARCHAR(255) NOT NULL
+CREATE TABLE users (
+  id serial PRIMARY KEY NOT NULL,
+  first_name varchar(30) NOT NULL,
+  last_name varchar(50) NOT NULL,
+  email varchar(100) UNIQUE NOT NULL,
+  password varchar(100) NOT NULL
 );
 
-CREATE TABLE interviews (
-  id SERIAL PRIMARY KEY NOT NULL,
-  student VARCHAR(255) NOT NULL,
-  interviewer_id INTEGER REFERENCES interviewers(id) ON DELETE CASCADE,
-  appointment_id INTEGER UNIQUE REFERENCES appointments(id) ON DELETE CASCADE
+CREATE TABLE orders (
+  id serial PRIMARY KEY NOT NULL,
+  user_id integer REFERENCES users(id) NOT NULL,
+  order_date date NOT NULL,
+  conf_code varchar(30) NOT NULL
 );
 
-CREATE TABLE available_interviewers (
-  id SERIAL PRIMARY KEY NOT NULL,
-  day_id INTEGER REFERENCES days(id) ON DELETE CASCADE,
-  interviewer_id INTEGER REFERENCES interviewers(id) ON DELETE CASCADE
+CREATE TABLE order_items (
+  id serial NOT NULL,
+  order_id integer REFERENCES orders(id) NOT NULL,
+  event_id integer NOT NULL,
+  qty smallint NOT NULL
 );
+
+ALTER TABLE events ADD FOREIGN KEY (venue) REFERENCES venues (id);
+
+ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users (id);
+
+ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders (id);
+
+ALTER TABLE order_items ADD FOREIGN KEY (id) REFERENCES events (id);

@@ -1,39 +1,14 @@
-WITH days(day) AS (
-  VALUES ( 'Monday' ), ( 'Tuesday' ), ( 'Wednesday' ), ( 'Thursday' ), ( 'Friday' )
-)
-INSERT INTO days (name)
-SELECT day FROM days;
+-- Venues
+INSERT INTO venues(name, description, capacity, fee) 
+  values('Patricia A. Whelan Performance Hall', '3h minimum, $100/hour; Staff & security fee: $60/hour, Combined rental fee: $160/hour', 336, 100)
 
-WITH times(time) AS (
-	VALUES ('12pm'), ('1pm'), ('2pm'), ('3pm'), ('4pm')
-)
-INSERT INTO appointments (time, day_id)
-SELECT time, id as day_id FROM days, times ORDER BY day_id, time;
+INSERT INTO venues(name, description, capacity, fee) 
+  values('BMO Financial Group Community Room', 'AV control system touch panels, High-quality video ;projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
 
-INSERT INTO interviewers (name, avatar)
-VALUES
-  ('Sylvia Palmer', 'https://i.imgur.com/LpaY82x.png'),
-  ('Tori Malcolm', 'https://i.imgur.com/Nmx0Qxo.png'),
-  ('Mildred Nazir', 'https://i.imgur.com/T2WwVfS.png'),
-  ('Cohana Roy', 'https://i.imgur.com/FK8V841.jpg'),
-  ('Sven Jones', 'https://i.imgur.com/twYrpay.jpg'),
-  ('Susan Reynolds', 'https://i.imgur.com/TdOAdde.jpg'),
-  ('Alec Quon', 'https://i.imgur.com/3tVgsra.jpg'),
-  ('Viktor Jain', 'https://i.imgur.com/iHq8K8Z.jpg'),
-  ('Lindsay Chu', 'https://i.imgur.com/nPywAp1.jpg'),
-  ('Samantha Stanic', 'https://i.imgur.com/okB9WKC.jpg');
+INSERT INTO venues(name, description, capacity, fee) 
+  values('Calgary Central Library room 0-13', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
 
-INSERT INTO available_interviewers (day_id, interviewer_id)
-SELECT 1 as day_id, interviewers.interviewer_id FROM ( SELECT id AS interviewer_id FROM interviewers ORDER BY RANDOM() LIMIT 5 ) interviewers;
+INSERT INTO venues(name, description, capacity, fee) 
+  values('Calgary Central Library room 0-14', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
 
-INSERT INTO available_interviewers (day_id, interviewer_id)
-SELECT 2 as day_id, interviewers.interviewer_id FROM ( SELECT id AS interviewer_id FROM interviewers ORDER BY RANDOM() LIMIT 5 ) interviewers;
-
-INSERT INTO available_interviewers (day_id, interviewer_id)
-SELECT 3 as day_id, interviewers.interviewer_id FROM ( SELECT id AS interviewer_id FROM interviewers ORDER BY RANDOM() LIMIT 5 ) interviewers;
-
-INSERT INTO available_interviewers (day_id, interviewer_id)
-SELECT 4 as day_id, interviewers.interviewer_id FROM ( SELECT id AS interviewer_id FROM interviewers ORDER BY RANDOM() LIMIT 5 ) interviewers;
-
-INSERT INTO available_interviewers (day_id, interviewer_id)
-SELECT 5 as day_id, interviewers.interviewer_id FROM ( SELECT id AS interviewer_id FROM interviewers ORDER BY RANDOM() LIMIT 5 ) interviewers;
+ALTER SEQUENCE venues_id_seq RESTART WITH 5;
