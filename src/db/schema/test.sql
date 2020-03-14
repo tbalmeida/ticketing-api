@@ -25,7 +25,7 @@ INSERT INTO events (title, description, event_date, event_time, duration, venue,
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price)
  VALUES ('Feb 1st - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
- '2020-02-01', '10:00', '2:00', 3, 40, 2, 15);
+ '2020-02-01', '10:00', '2:00', 4, 40, 2, 15);
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price)
  VALUES ('Feb 15 - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
