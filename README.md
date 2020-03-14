@@ -1,4 +1,6 @@
-# Interview Scheduler API
+# Ticketing API
+
+WORKING DOCUMENT - the instructions still are the ones from the boilerplate
 
 ## Setup
 
@@ -21,7 +23,7 @@ Copy the `.env.example` file to `.env.development` and fill in the necessary Pos
 ```
 PGHOST=localhost
 PGUSER=development
-PGDATABASE=scheduler_development
+PGDATABASE=ticketing_development
 PGPASSWORD=development
 PGPORT=5432
 ```
