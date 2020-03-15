@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS users CASCADE;
 
 -- VIEWS
 DROP VIEW IF EXISTS public.events_vw;
+DROP VIEW IF EXISTS public.order_details_vw;
 
 -- FUNCTIONS
 DROP FUNCTION IF EXISTS public.getpercent(integer, integer);
@@ -134,3 +135,38 @@ ALTER TABLE public.events_vw
     OWNER TO development;
 COMMENT ON VIEW public.events_vw
     IS 'Event data with venue and attendance data';
+
+CREATE OR REPLACE VIEW public.order_details_vw
+ AS
+ SELECT u.first_name,
+    u.last_name,
+    u.email,
+    oi.order_id,
+    o.order_date,
+    o.conf_code,
+    oi.id AS item_id,
+    e.title,
+    e.description,
+    e.event_date,
+    e.event_time,
+    e.duration,
+    oi.qty,
+    e.price,
+    oi.qty * e.price AS line_total,
+    oi.event_id,
+    ( SELECT sum(oi2.qty * e2.price) AS sum
+           FROM orders o2
+             JOIN order_items oi2 ON o2.id = oi2.order_id
+             JOIN events e2 ON oi2.event_id = e2.id
+          WHERE o2.id = o.id
+          GROUP BY o2.id) AS order_total
+   FROM orders o
+     JOIN order_items oi ON o.id = oi.order_id
+     JOIN events e ON oi.event_id = e.id
+     JOIN users u ON o.user_id = u.id
+  ORDER BY o.order_date DESC, o.id, oi.id;
+
+ALTER TABLE public.order_details_vw
+    OWNER TO development;
+COMMENT ON VIEW public.order_details_vw
+    IS 'View w/ order / line item / event / user data';
