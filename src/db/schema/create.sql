@@ -4,6 +4,16 @@ DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS venues CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
+-- VIEWS
+DROP VIEW IF EXISTS public.events_vw;
+
+-- FUNCTIONS
+DROP FUNCTION IF EXISTS public.getpercent(integer, integer);
+DROP FUNCTION IF EXISTS public.md5handle(integer);
+
+
+-- CREATING TABLES
+
 CREATE TABLE venues (
   id serial PRIMARY KEY NOT NULL,
   name varchar(100) NOT NULL,
@@ -54,3 +64,73 @@ ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders (id);
 
 ALTER TABLE order_items ADD FOREIGN KEY (id) REFERENCES events (id);
+
+-- Functions
+  -- used to calculate % of capacity used and % of tickets sold
+CREATE OR REPLACE FUNCTION public.getpercent(
+	lesser integer,
+	total integer)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE 
+AS $BODY$
+  DECLARE result NUMERIC;
+  BEGIN
+  result = ROUND( (lesser::numeric / total) * 100, 2);
+
+  RETURN result;
+  END
+  $BODY$;
+
+ALTER FUNCTION public.getpercent(integer, integer)
+    OWNER TO development;
+
+  -- used to create handle for events/users/confirmation
+CREATE OR REPLACE FUNCTION public.md5handle(
+	integer)
+    RETURNS text
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE 
+AS $BODY$ 
+  select upper(
+    substring(
+      (SELECT string_agg(md5(random()::TEXT), '')
+       FROM generate_series(
+           1,
+           CEIL($1 / 32.)::integer) 
+       ), 1, $1) );
+$BODY$;
+
+ALTER FUNCTION public.md5handle(integer)
+    OWNER TO development;
+
+
+-- Views
+CREATE OR REPLACE VIEW public.events_vw
+ AS
+ SELECT e.id AS event_id,
+    e.title,
+    e.description AS event_description,
+    e.event_date,
+    e.event_time,
+    e.duration,
+    e.total_issued,
+    e.limit_per_user,
+    e.price,
+    v.id AS venue_id,
+    v.name AS venue_name,
+    v.description AS venue_description,
+    v.capacity,
+    v.fee,
+    getpercent(e.total_issued, v.capacity) AS percent_capacity,
+    e.total_issued * e.price AS max_revenue
+   FROM events e
+     JOIN venues v ON e.venue = v.id
+  ORDER BY e.event_date DESC, v.name;
+
+ALTER TABLE public.events_vw
+    OWNER TO development;
+COMMENT ON VIEW public.events_vw
+    IS 'Event data with venue and attendance data';
