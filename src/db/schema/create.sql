@@ -5,12 +5,49 @@ DROP TABLE IF EXISTS venues CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- VIEWS
-DROP VIEW IF EXISTS public.events_vw;
-DROP VIEW IF EXISTS public.order_details_vw;
+DROP VIEW IF EXISTS events_vw;
+DROP VIEW IF EXISTS order_details_vw;
 
 -- FUNCTIONS
-DROP FUNCTION IF EXISTS public.getpercent(integer, integer);
-DROP FUNCTION IF EXISTS public.md5handle(integer);
+DROP FUNCTION IF EXISTS getpercent(integer, integer);
+DROP FUNCTION IF EXISTS md5handle(integer);
+
+-- Functions
+  -- used to calculate % of capacity used and % of tickets sold
+CREATE OR REPLACE FUNCTION getpercent(
+	lesser integer,
+	total integer)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE 
+AS $BODY$
+  DECLARE result NUMERIC;
+  BEGIN
+  result = ROUND( (lesser::numeric / total) * 100, 2);
+
+  RETURN result;
+  END
+  $BODY$;
+
+  -- used to create handle for events/users/confirmation
+CREATE OR REPLACE FUNCTION md5handle(
+	integer)
+    RETURNS text
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE 
+AS $BODY$ 
+  select upper(
+    substring(
+      (SELECT string_agg(md5(random()::TEXT), '')
+       FROM generate_series(
+           1,
+           CEIL($1 / 32.)::integer) 
+       ), 1, $1) );
+$BODY$;
+
+
 
 
 -- CREATING TABLES
@@ -68,50 +105,9 @@ ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders (id);
 
 ALTER TABLE order_items ADD FOREIGN KEY (id) REFERENCES events (id);
 
--- Functions
-  -- used to calculate % of capacity used and % of tickets sold
-CREATE OR REPLACE FUNCTION public.getpercent(
-	lesser integer,
-	total integer)
-    RETURNS numeric
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE 
-AS $BODY$
-  DECLARE result NUMERIC;
-  BEGIN
-  result = ROUND( (lesser::numeric / total) * 100, 2);
-
-  RETURN result;
-  END
-  $BODY$;
-
-ALTER FUNCTION public.getpercent(integer, integer)
-    OWNER TO development;
-
-  -- used to create handle for events/users/confirmation
-CREATE OR REPLACE FUNCTION public.md5handle(
-	integer)
-    RETURNS text
-    LANGUAGE 'sql'
-    COST 100
-    VOLATILE 
-AS $BODY$ 
-  select upper(
-    substring(
-      (SELECT string_agg(md5(random()::TEXT), '')
-       FROM generate_series(
-           1,
-           CEIL($1 / 32.)::integer) 
-       ), 1, $1) );
-$BODY$;
-
-ALTER FUNCTION public.md5handle(integer)
-    OWNER TO development;
-
 
 -- Views
-CREATE OR REPLACE VIEW public.events_vw
+CREATE OR REPLACE VIEW events_vw
  AS
  SELECT e.id AS event_id,
     e.title,
@@ -133,12 +129,7 @@ CREATE OR REPLACE VIEW public.events_vw
      JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;
 
-ALTER TABLE public.events_vw
-    OWNER TO development;
-COMMENT ON VIEW public.events_vw
-    IS 'Event data with venue and attendance data';
-
-CREATE OR REPLACE VIEW public.order_details_vw
+CREATE OR REPLACE VIEW order_details_vw
  AS
  SELECT u.first_name,
     u.last_name,
@@ -167,8 +158,3 @@ CREATE OR REPLACE VIEW public.order_details_vw
      JOIN events e ON oi.event_id = e.id
      JOIN users u ON o.user_id = u.id
   ORDER BY o.order_date DESC, o.id, oi.id;
-
-ALTER TABLE public.order_details_vw
-    OWNER TO development;
-COMMENT ON VIEW public.order_details_vw
-    IS 'View w/ order / line item / event / user data';
