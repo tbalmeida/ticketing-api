@@ -30,7 +30,8 @@ CREATE TABLE users (
   first_name varchar(30) NOT NULL,
   last_name varchar(50) NOT NULL,
   email varchar(100) UNIQUE NOT NULL,
-  password varchar(100) NOT NULL
+  password varchar(100) NOT NULL,
+  handle varchar(10) DEFAULT 'U' || md5handle(9)
 );
 
 CREATE TABLE orders (
@@ -44,7 +45,8 @@ CREATE TABLE order_items (
   id serial NOT NULL,
   order_id integer REFERENCES orders(id) NOT NULL,
   event_id integer NOT NULL,
-  qty smallint NOT NULL
+  qty smallint NOT NULL,
+  conf_code varchar(30) DEFAULT 'T' || md5handle(29)
 );
 
 ALTER TABLE events ADD FOREIGN KEY (venue) REFERENCES venues (id);

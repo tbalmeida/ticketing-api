@@ -11,8 +11,7 @@ module.exports = db => {
     .then(({ rows: venues }) => {
       response.json(venues);
     })
-    .catch(e => console.error(e.stack))
-    ;
+    .catch(e => console.error(e.stack));
   });
 
   // get an especific venue
@@ -46,16 +45,15 @@ module.exports = db => {
     db.query(`
       INSERT INTO venues (name, description, capacity, fee) VALUES ($1, $2, $3, $4)
       RETURNING *;
-      `, [ request.params.name, 
-          request.params.description, 
-          request.params.capacity, 
-          request.params.fee ])
+      `, [ request.body.name, 
+          request.body.description, 
+          request.body.capacity, 
+          request.body.fee ])
     .then(({ rows: venues }) => {
       response.json(venues);
     })
     .catch(e => console.error(e.stack));
   });
-
 
   // Update a venue
   router.patch("/venues/:id", (request, response) => {
@@ -63,24 +61,23 @@ module.exports = db => {
       UPDATE venues 
       SET name = $2, description = $3, capacity = $4, fee = $5
       WHERE id = $1 RETURNING *;
-      `, [ request.params.id,
-          request.params.name, 
-          request.params.description, 
-          request.params.capacity, 
-          request.params.fee ])
+      `, [ request.body.id,
+          request.body.name, 
+          request.body.description, 
+          request.body.capacity, 
+          request.body.fee ])
     .then(({ rows: venues }) => {
       response.json(venues);
     })
     .catch(e => console.error(e.stack));
   });
 
-
   // delete a venue
   router.delete("/venues/:id", (request, response) => {
     db.query(`
-      DELETE FROM venues WHERE id = $1;;
+      DELETE FROM venues WHERE id = $1;
       `, [ request.params.id ])
-    .then(() => response.status(200).send("Venue deleted successfuly"))
+    .then(() => response.status(200).send("Venue deleted successfully"))
     .catch(e => console.error(e.stack));
   });
 

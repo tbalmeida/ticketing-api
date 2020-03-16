@@ -1,35 +1,47 @@
 const router = require("express").Router();
 
 module.exports = db => {
-  // route to get all the orders. Should be protected, only for system
-  router.get("/orders", (request, response) => {
-    db.query(
-      `
-      SELECT *
-      FROM orders_vw
-     `).then(({ rows: orders }) => {
-      response.json(venues);
-    });
-  });
 
   
+  // New user
+  router.put("/signup", (request, response) => {
+    db.query(`
+      INSERT INTO users (first_name, last_name, email, password) 
+      VALUES ($1, $2, $3, $4) RETURNING *;
+     `, [request.body.first_name, request.body.last_name, request.body.email, request.body.password])
+     .then(({ rows: users }) => { response.json(users) })
+     .catch(e => console.error(e.stack));
+  });
 
-  // route to delete an event
-  // router.delete("/orders/:id", (request, response) => {
-  //   if (process.env.TEST_ERROR) {
-  //     setTimeout(() => response.status(500).json({}), 1000);
-  //     return;
-  //   }
+  // select * from users where email = 'john@fake.com' and password = '123'
+  // User login
+  router.post("/login", (request, response) => {
+    console.log("Check:", request.body);
+    db.query(`
+      SELECT * FROM users WHERE email = $1 and password = $2;
+     `, [ request.body.email,
+          request.body.password ])
+     .then(({ rows: users }) => { response.json(users) })
+     .catch(e => console.error(e.stack));
+  });
 
-  //   db.query(`DELETE FROM orders WHERE id = $1::integer`, [
-  //     request.params.id
-  //   ]).then(() => {
-  //     setTimeout(() => {
-  //       response.status(204).json({});
-  //       updateAppointment(Number(request.params.id), null);
-  //     }, 1000);
-  //   });
-  // });
+  // User update
+  router.patch("/user/:id", (request, response) => {
+    db.query(`
+      UPDATE users
+      SET first_name = $3, last_name = $4, email = $5, password = $6
+      WHERE email = $1 AND password = $2 RETURNING *;
+     `, [
+        request.body.email,
+        request.body.password,
+        request.body.first_name,
+        request.body.last_name,
+        request.body.new_email,
+        request.body.new_password
+     ])
+     .then(({ rows: users }) => { response.json(users) })
+     .catch(e => console.error(e.stack));
+  });
 
   return router;
 };

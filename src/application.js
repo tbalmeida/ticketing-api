@@ -7,14 +7,14 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 const app = express();
-
 const db = require("./db");
 
 const venues = require("./routes/v1.0/venues");
 const events = require("./routes/v1.0/events");
+const users  = require("./routes/v1.0/users");
 const orders = require("./routes/v1.0/orders");
-const users = require("./routes/v1.0/users");
 
+// used to read files when on Dev or Test env
 function read(file) {
   return new Promise((resolve, reject) => {
     fs.readFile(
@@ -41,9 +41,10 @@ module.exports = function application(
   // API v1.0 - created for the finals
   app.use("/api/1.0/", venues(db));
   app.use("/api/1.0/", events(db));
+  app.use("/api/1.0/", users(db) );
   app.use("/api/1.0/", orders(db));
-  app.use("/api/1.0/", users(db));
 
+  // allows reset of the database when on Dev or Test env
   if (ENV === "development" || ENV === "test") {
     Promise.all([
       read(path.resolve(__dirname, `db/schema/create.sql`)),

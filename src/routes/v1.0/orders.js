@@ -7,10 +7,17 @@ module.exports = db => {
       `
       SELECT *
       FROM orders_vw
-     `).then(({ rows: orders }) => {
-      response.json(venues);
+     `)
+     .then(({ rows: orders }) => {
+      response.json(orders);
     });
   });
+
+  router.get("/orders/:id", () => {
+    db.query(`
+    `)
+    .then(() => {});
+  })
 
 
   // route to delete an event
