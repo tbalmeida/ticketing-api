@@ -1,6 +1,6 @@
 -- Venues
 INSERT INTO venues(name, description, capacity, fee) 
-  values('Patricia A. Whelan Performance Hall', '3h minimum, $100/hour; Staff & security fee: $60/hour, Combined rental fee: $160/hour', 336, 100)
+  values('Patricia A. Whelan Performance Hall', '3h minimum, $100/hour; Staff & security fee: $60/hour, Combined rental fee: $160/hour', 336, 100);
 
 INSERT INTO venues(name, description, capacity, fee) 
   values('BMO Financial Group Community Room', 'AV control system touch panels, High-quality video ;projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
@@ -25,7 +25,7 @@ INSERT INTO events (title, description, event_date, event_time, duration, venue,
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price)
  VALUES ('Feb 1st - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
- '2020-02-01', '10:00', '2:00', 3, 40, 2, 15);
+ '2020-02-01', '10:00', '2:00', 4, 40, 2, 15);
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price)
  VALUES ('Feb 15 - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
