@@ -47,9 +47,6 @@ AS $BODY$
        ), 1, $1) );
 $BODY$;
 
-
-
-
 -- CREATING TABLES
 
 CREATE TABLE venues (
@@ -57,7 +54,12 @@ CREATE TABLE venues (
   name varchar(100) NOT NULL,
   description varchar(300),
   capacity integer NOT NULL,
-  fee money NOT NULL
+  fee money NOT NULL,
+  info_url varchar(100) NULL,
+  address varchar(300) NULL,
+  city varchar(50) NULL,
+  province char(2) NULL,
+  address_url varchar(200) null
 );
 
 CREATE TABLE events (
@@ -70,7 +72,8 @@ CREATE TABLE events (
   venue int REFERENCES venues(id) NOT NULL,
   total_issued int NOT NULL,
   limit_per_user smallint,
-  price money NOT NULL
+  price money NOT NULL,
+  handle varchar(10) DEFAULT 'E' || md5handle(9)
 );
 
 CREATE TABLE users (
@@ -124,7 +127,8 @@ CREATE OR REPLACE VIEW events_vw
     v.capacity,
     v.fee,
     getpercent(e.total_issued, v.capacity) AS percent_capacity,
-    e.total_issued * e.price AS max_revenue
+    e.total_issued * e.price AS max_revenue,
+    v.info_url, v.address, v.city, v.province, v.address_url
    FROM events e
      JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;

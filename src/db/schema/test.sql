@@ -1,17 +1,20 @@
 -- Venues
-INSERT INTO venues(name, description, capacity, fee) 
-  values('Patricia A. Whelan Performance Hall', '3h minimum, $100/hour; Staff & security fee: $60/hour, Combined rental fee: $160/hour', 336, 100);
+INSERT INTO venues(name, description, capacity, fee, address, city, province, address_url, info_url) 
+  values('Patricia A. Whelan Performance Hall', '3h minimum, $100/hour; Staff & security fee: $60/hour, Combined rental fee: $160/hour', 336, 100, '800 3 St SE', 'Calgary', 'AB', 'https://goo.gl/maps/cnkkwKsvK6bTxLLLA', 'https://calgarylibrary.ca/events-and-programs/book-a-space/central-library-event-spaces/');
 
-INSERT INTO venues(name, description, capacity, fee) 
-  values('BMO Financial Group Community Room', 'AV control system touch panels, High-quality video ;projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
+INSERT INTO venues(name, description, capacity, fee, address, city, province, address_url, info_url) 
+  values('BMO Financial Group Community Room', 'AV control system touch panels, High-quality video ;projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0, '800 3 St SE', 'Calgary', 'AB', 'https://goo.gl/maps/cnkkwKsvK6bTxLLLA', 'https://calgarylibrary.ca/events-and-programs/book-a-space/central-library-event-spaces/');
 
-INSERT INTO venues(name, description, capacity, fee) 
-  values('Calgary Central Library room 0-13', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
+INSERT INTO venues(name, description, capacity, fee, address, city, province, address_url, info_url) 
+  values('Calgary Central Library room 0-13', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0, '800 3 St SE', 'Calgary', 'AB', 'https://goo.gl/maps/cnkkwKsvK6bTxLLLA', 'https://calgarylibrary.ca/events-and-programs/book-a-space/central-library-event-spaces/');
 
-INSERT INTO venues(name, description, capacity, fee) 
-  values('Calgary Central Library room 0-14', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0);
+INSERT INTO venues(name, description, capacity, fee, address, city, province, address_url, info_url) 
+  values('Calgary Central Library room 0-14', 'AV control system touch panels, High-quality video projectors, Flexible layout options. Accommodates 50–80 people; Integrated sound system', 50, 0, '800 3 St SE', 'Calgary', 'AB', 'https://goo.gl/maps/cnkkwKsvK6bTxLLLA', 'https://calgarylibrary.ca/events-and-programs/book-a-space/central-library-event-spaces/');
 
-ALTER SEQUENCE venues_id_seq RESTART WITH 5;
+INSERT INTO venues(name, description, capacity, fee, address, city, province, address_url, info_url) 
+  VALUES('City of Calgary - Father David Bauer', 'Washrooms, tables, seminar table, chairs, white board, sink/water, overhead projector, cold vending machine & snack vending machine', 20, 0, '2424 University Drive N.W', 'Calgary', 'AB', 'https://goo.gl/maps/vJ6nKdLzpxhUHu2YA', 'https://www.calgary.ca/CSPS/Recreation/Pages/Rentals-and-bookings/Meeting-room-locations.aspx');
+
+ALTER SEQUENCE venues_id_seq RESTART WITH 6;
 
 
 -- Events
@@ -42,10 +45,10 @@ INSERT INTO users (first_name, last_name, email, password) VALUES ('Jack', 'Smit
 ALTER SEQUENCE users_id_seq RESTART WITH 4;
 
 -- Orders
-INSERT INTO orders (user_id, order_date, conf_code) VALUES (1, '2020-01-04', 'ABCD conf code');
+INSERT INTO orders (user_id, order_date) VALUES (1, '2020-01-04');
   INSERT INTO order_items (order_id, event_id, qty) VALUES (1, 1, 3);
 
-INSERT INTO orders (user_id, order_date, conf_code) VALUES (3, '2020-01-06', 'ABCD conf code');
+INSERT INTO orders (user_id, order_date) VALUES (3, '2020-01-06');
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 2, 1);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 3, 2);
 

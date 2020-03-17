@@ -4,7 +4,7 @@ module.exports = db => {
   // route to get all the venues
   router.get("/venues", (request, response) => {
     db.query(`
-      SELECT id, name, description, capacity, fee
+      SELECT id, name, description, capacity, fee, info_url, address_url, address, city, province
       FROM venues
       ORDER BY name ASC
      `)
