@@ -16,7 +16,6 @@ module.exports = db => {
   // select * from users where email = 'john@fake.com' and password = '123'
   // User login
   router.post("/login", (request, response) => {
-    console.log("Check:", request.body);
     db.query(`
       SELECT * FROM users WHERE email = $1 and password = $2;
      `, [ request.body.email,

@@ -79,7 +79,13 @@ module.exports = db => {
     db.query(`
       DELETE FROM events WHERE id = $1;
       `, [ request.params.id ])
-    .then(() => response.status(200).send("Event deleted successfully"))
+    .then((res) => {
+      if (res.rowCount >= 1) {
+        response.status(200).send("Event deleted successfully")
+      } else {
+        response.status(204).send("Event not found. Please, check if the proper venue was selected.")
+      }
+    })
     .catch(e => console.error(e.stack));
   });
 
