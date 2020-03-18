@@ -161,3 +161,31 @@ CREATE OR REPLACE VIEW order_details_vw
      JOIN events e ON oi.event_id = e.id
      JOIN users u ON o.user_id = u.id
   ORDER BY o.order_date DESC, o.id, oi.id;
+
+  -- CRUD functions
+CREATE OR REPLACE FUNCTION addUser (
+  pFirst_name varchar(30),
+  pLast_name varchar(50),
+  pEmail varchar(100),
+  password varchar(100)
+)
+  RETURNS varchar(6)
+  AS
+  $$
+    DECLARE userHandle varchar (6);
+    BEGIN
+
+    SELECT handle INTO userhandle FROM users WHERE email = pEmail;
+
+    IF NOT FOUND THEN
+      INSERT INTO users (first_name, last_name, email) VALUES (pFirst_name, pLast_name, pEmail)
+      RETURNING handle INTO userHandle;
+    ELSE
+      RAISE WARNING 'This user is already registered: %', pEmail;
+    END IF;
+
+    RETURN userHandle;
+
+    END
+    $$
+    LANGUAGE plpgsql;
