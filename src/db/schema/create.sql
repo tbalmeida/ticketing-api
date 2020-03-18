@@ -73,7 +73,7 @@ CREATE TABLE events (
   total_issued int NOT NULL,
   limit_per_user smallint,
   price money NOT NULL,
-  handle varchar(10) DEFAULT 'E' || md5handle(9)
+  handle varchar(6) DEFAULT 'E' || md5handle(5)
 );
 
 CREATE TABLE users (
@@ -82,7 +82,7 @@ CREATE TABLE users (
   last_name varchar(50) NOT NULL,
   email varchar(100) UNIQUE NOT NULL,
   password varchar(100) NOT NULL,
-  handle varchar(10) DEFAULT 'U' || md5handle(9)
+  handle varchar(6) DEFAULT 'U' || md5handle(5)
 );
 
 CREATE TABLE orders (
