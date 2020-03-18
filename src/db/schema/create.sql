@@ -181,7 +181,7 @@ CREATE OR REPLACE FUNCTION addUser (
       INSERT INTO users (first_name, last_name, email) VALUES (pFirst_name, pLast_name, pEmail)
       RETURNING handle INTO userHandle;
     ELSE
-      RAISE WARNING 'This user is already registered: %', pEmail;
+      RAISE ERROR 'This user is already registered: %', pEmail;
     END IF;
 
     RETURN userHandle;
