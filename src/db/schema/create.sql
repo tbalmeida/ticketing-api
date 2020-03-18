@@ -95,7 +95,7 @@ CREATE TABLE orders (
 CREATE TABLE order_items (
   id serial NOT NULL,
   order_id integer REFERENCES orders(id) NOT NULL,
-  event_id integer NOT NULL,
+  event_id integer REFERENCES events(id) NOT NULL,
   qty smallint NOT NULL,
   conf_code varchar(30) DEFAULT 'T' || md5handle(29)
 );
@@ -105,8 +105,7 @@ ALTER TABLE events ADD FOREIGN KEY (venue) REFERENCES venues (id);
 ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders (id);
-
-ALTER TABLE order_items ADD FOREIGN KEY (id) REFERENCES events (id);
+ALTER TABLE order_items ADD FOREIGN KEY (event_id) REFERENCES events (id);
 
 
 -- Views

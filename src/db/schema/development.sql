@@ -40,8 +40,10 @@ ALTER SEQUENCE events_id_seq RESTART WITH 5;
 INSERT INTO users (first_name, last_name, email, password) VALUES ('John', 'Doe', 'john@fake.com', '123');
 INSERT INTO users (first_name, last_name, email, password) VALUES ('Jane', 'Doe', 'jane@fake.com', '123');
 INSERT INTO users (first_name, last_name, email, password) VALUES ('Jack', 'Smith', 'jack@fake.com', '123');
+INSERT INTO users (first_name, last_name, email, password) VALUES ('Rick', 'Poe', 'rpoe@fake.com', '123');
+INSERT INTO users (first_name, last_name, email, password) VALUES ('Dianne', 'Black', 'dblack@fake.com', '123');
 
-ALTER SEQUENCE users_id_seq RESTART WITH 4;
+ALTER SEQUENCE users_id_seq RESTART WITH 6;
 
 -- Orders
 INSERT INTO orders (user_id, order_date, conf_code) VALUES (1, '2020-01-04', 'ABCD conf code');
@@ -51,5 +53,15 @@ INSERT INTO orders (user_id, order_date, conf_code) VALUES (3, '2020-01-06', 'AB
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 2, 1);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 3, 2);
 
-ALTER SEQUENCE orders_id_seq RESTART WITH 3;
-ALTER SEQUENCE users_id_seq RESTART WITH 4;
+INSERT INTO orders (user_id, order_date, conf_code) VALUES (4, '2020-01-07', 'ABCD conf code');
+  INSERT INTO order_items (order_id, event_id, qty) VALUES (3, 1, 2);
+
+INSERT INTO orders (user_id, order_date, conf_code) VALUES (5, '2020-01-04', 'ABCD conf code');
+  INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 2, 4);
+  INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 2, 4);
+
+ALTER SEQUENCE orders_id_seq RESTART WITH 4;
+ALTER SEQUENCE order_items_id_seq RESTART WITH 7;
+
+ALTER SEQUENCE orders_id_seq RESTART WITH 1;
+ALTER SEQUENCE order_items_id_seq RESTART WITH 1;
