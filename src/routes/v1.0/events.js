@@ -39,7 +39,7 @@ module.exports = db => {
         limit_per_user = $9,
         price = $10
       WHERE id = $1 RETURNING *;
-     `, [ request.body.id,
+     `, [ request.params.id,
           request.body.title,
           request.body.description,
           request.body.event_date,
@@ -83,7 +83,7 @@ module.exports = db => {
       if (res.rowCount >= 1) {
         response.status(200).send("Event deleted successfully")
       } else {
-        response.status(204).send("Event not found. Please, check if the proper venue was selected.")
+        response.status(404).send("Event not found. Please, check if the proper venue was selected.")
       }
     })
     .catch(e => console.error(e.stack));
