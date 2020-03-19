@@ -163,11 +163,13 @@ CREATE OR REPLACE VIEW order_details_vw
   ORDER BY o.order_date DESC, o.id, oi.id;
 
   -- CRUD functions
+DROP FUNCTION IF EXISTS adduser(character varying,character varying,character varying,character varying);
+
 CREATE OR REPLACE FUNCTION addUser (
   pFirst_name varchar(30),
   pLast_name varchar(50),
   pEmail varchar(100),
-  password varchar(100)
+  pPwd varchar(100)
 )
   RETURNS varchar(6)
   AS
@@ -178,10 +180,10 @@ CREATE OR REPLACE FUNCTION addUser (
     SELECT handle INTO userhandle FROM users WHERE email = pEmail;
 
     IF NOT FOUND THEN
-      INSERT INTO users (first_name, last_name, email) VALUES (pFirst_name, pLast_name, pEmail)
+      INSERT INTO users (first_name, last_name, email, password) VALUES (pFirst_name, pLast_name, pEmail, pPwd)
       RETURNING handle INTO userHandle;
     ELSE
-      RAISE ERROR 'This user is already registered: %', pEmail;
+      RAISE WARNING 'This user is already registered: %', pEmail;
     END IF;
 
     RETURN userHandle;
@@ -189,3 +191,24 @@ CREATE OR REPLACE FUNCTION addUser (
     END
     $$
     LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION userLogin (pEmail varchar(100), pPwd varchar(100))
+  RETURNS TABLE(
+    id integer,
+    first_name varchar(30),
+    last_name varchar(50),
+    email varchar(100),
+    handle varchar(6)
+    ) 
+AS $$
+BEGIN
+  RETURN QUERY SELECT u.id, u.first_name, u.last_name, u.email, u.handle
+    FROM users u
+    WHERE u.email = pEmail AND u.password = pPwd;
+
+  IF NOT FOUND THEN
+    RAISE WARNING 'Could not find a user with the provided credentials.';
+  END IF;
+
+END;
+$$ LANGUAGE plpgsql;
