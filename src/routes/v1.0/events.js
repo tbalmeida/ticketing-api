@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const sendMsg = require( "../../helper/emailHelper");
 
 module.exports = db => {
   // route to get all the events

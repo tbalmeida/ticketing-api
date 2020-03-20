@@ -1,5 +1,6 @@
-exports.sendMsg = function (to, subject, text, HTML) {
-	const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+
+function sendMsg (to, subject, text, HTML) {
 	
 	const transporter = nodemailer.createTransport({
 		service: 'gmail',
@@ -18,10 +19,11 @@ exports.sendMsg = function (to, subject, text, HTML) {
 	};
 	
 	transporter.sendMail(mailOptions, (err, data) => {
-		console.log(transporter)
 		if (err) {
 			return console.log('Error:', err);
 		}
 			return console.log('Email sent!');
 	});
 };
+
+module.exports = (sendMsg)
