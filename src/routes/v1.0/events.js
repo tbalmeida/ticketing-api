@@ -82,9 +82,9 @@ module.exports = db => {
       `, [ request.params.id ])
     .then((res) => {
       if (res.rowCount >= 1) {
-        response.status(200).send("Event deleted successfully")
+        response.status(200).json({message: "Event deleted successfully"})
       } else {
-        response.status(404).send("Event not found. Please, check if the proper venue was selected.")
+        response.status(404).json({message: "Event not found. Please, check if the proper venue was selected."})
       }
     })
     .catch(e => console.error(e.stack));

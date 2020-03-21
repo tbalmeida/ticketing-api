@@ -20,7 +20,7 @@ module.exports = db => {
       if (users.length !== 0) {
         response.json(users) 
       } else {
-        response.status(404).send("User not found. Please, verify the email and password provided.")
+        response.status(404).json({message: "User not found. Please, verify the email and password provided."})
       }
     })
     .catch(e => console.error(e.stack));
