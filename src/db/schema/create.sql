@@ -1,22 +1,24 @@
+-- VIEWS
+DROP VIEW IF EXISTS events_vw;
+DROP VIEW IF EXISTS order_details_vw;
+
+-- TABLES
+DROP TABLE IF EXISTS attendance CASCADE;
 DROP TABLE IF EXISTS order_items CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS venues CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
--- VIEWS
-DROP VIEW IF EXISTS events_vw;
-DROP VIEW IF EXISTS order_details_vw;
-
 -- FUNCTIONS
-DROP FUNCTION IF EXISTS getpercent(integer, integer);
-DROP FUNCTION IF EXISTS md5handle(integer);
+DROP FUNCTION IF EXISTS getpercent(INTEGER, INTEGER);
+DROP FUNCTION IF EXISTS md5handle(INTEGER);
 
 -- Functions
   -- used to calculate % of capacity used and % of tickets sold
 CREATE OR REPLACE FUNCTION getpercent(
-	lesser integer,
-	total integer)
+	lesser INTEGER,
+	total INTEGER)
     RETURNS numeric
     LANGUAGE 'plpgsql'
     COST 100
@@ -32,7 +34,7 @@ AS $BODY$
 
   -- used to create handle for events/users/confirmation
 CREATE OR REPLACE FUNCTION md5handle(
-	integer)
+	INTEGER)
     RETURNS text
     LANGUAGE 'sql'
     COST 100
@@ -43,69 +45,69 @@ AS $BODY$
       (SELECT string_agg(md5(random()::TEXT), '')
        FROM generate_series(
            1,
-           CEIL($1 / 32.)::integer) 
+           CEIL($1 / 32.)::INTEGER) 
        ), 1, $1) );
 $BODY$;
 
 -- CREATING TABLES
 
 CREATE TABLE venues (
-  id serial PRIMARY KEY NOT NULL,
-  name varchar(100) NOT NULL,
-  description varchar(300),
-  capacity integer NOT NULL,
-  fee money NOT NULL,
-  info_url varchar(100) NULL,
-  address varchar(300) NULL,
-  city varchar(50) NULL,
-  province char(2) NULL,
-  address_url varchar(200) null
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  description VARCHAR(300) NOT NULL,
+  capacity INTEGER NOT NULL,
+  hourly_fee MONEY NOT NULL,
+  info_url VARCHAR(100) NULL,
+  address VARCHAR(300) NULL,
+  city VARCHAR(50) NULL,
+  province CHAR(2) NULL,
+  address_url VARCHAR(200) NULL
 );
 
 CREATE TABLE events (
-  id serial PRIMARY KEY NOT NULL,
-  title varchar(100) UNIQUE NOT NULL,
-  description varchar(500) NOT NULL,
-  event_date date NOT NULL,
-  event_time time NOT NULL,
-  duration time NOT NULL,
-  venue int REFERENCES venues(id) NOT NULL,
-  total_issued int NOT NULL,
-  limit_per_user smallint,
-  price money NOT NULL,
-  handle varchar(6) DEFAULT 'E' || md5handle(5)
+  id SERIAL PRIMARY KEY NOT NULL,
+  title VARCHAR(100) UNIQUE NOT NULL,
+  description VARCHAR(500) NOT NULL,
+  event_date DATE NOT NULL,
+  event_time TIME NOT NULL,
+  duration TIME NOT NULL,
+  venue INT REFERENCES venues(id) NOT NULL,
+  total_issued INT NOT NULL,
+  limit_per_user SMALLINT,
+  price MONEY NOT NULL,
+  handle VARCHAR(6) DEFAULT 'e' || md5handle(5),
+  url_image VARCHAR(300) NULL
 );
 
 CREATE TABLE users (
-  id serial PRIMARY KEY NOT NULL,
-  first_name varchar(30) NOT NULL,
-  last_name varchar(50) NOT NULL,
-  email varchar(100) UNIQUE NOT NULL,
-  password varchar(100) NOT NULL,
-  handle varchar(6) DEFAULT 'U' || md5handle(5)
+  id SERIAL PRIMARY KEY NOT NULL,
+  first_name VARCHAR(30) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  handle VARCHAR(6) DEFAULT 'u' || md5handle(5)
 );
 
 CREATE TABLE orders (
-  id serial PRIMARY KEY NOT NULL,
-  user_id integer REFERENCES users(id) NOT NULL,
-  order_date date NOT NULL,
-  conf_code varchar(30) NOT NULL
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id) NOT NULL,
+  order_date DATE NOT NULL,
+  conf_code VARCHAR(10) DEFAULT 'o' || md5handle(9)
 );
 
 CREATE TABLE order_items (
-  id serial NOT NULL,
-  order_id integer REFERENCES orders(id) NOT NULL,
-  event_id integer REFERENCES events(id) NOT NULL,
-  qty smallint NOT NULL,
-  conf_code varchar(30) DEFAULT 'T' || md5handle(29)
+  id SERIAL PRIMARY KEY NOT NULL,
+  order_id INTEGER REFERENCES orders(id) NOT NULL,
+  event_id INTEGER REFERENCES events(id) NOT NULL,
+  qty SMALLINT NOT NULL,
+  conf_code VARCHAR(10) DEFAULT 't' || md5handle(9)
 );
 
-ALTER TABLE events ADD FOREIGN KEY (venue) REFERENCES venues (id);
-
-ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
-ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders (id);
-ALTER TABLE order_items ADD FOREIGN KEY (event_id) REFERENCES events (id);
+CREATE TABLE attendance (
+  id SERIAL PRIMARY KEY NOT NULL,
+  order_item_id INTEGER REFERENCES order_items(id) NOT NULL,
+  date_redeemed TIMESTAMP NOT NULL
+);
 
 
 -- Views
@@ -120,17 +122,40 @@ CREATE OR REPLACE VIEW events_vw
     e.total_issued,
     e.limit_per_user,
     e.price,
+    e.url_image AS event_img,
     v.id AS venue_id,
     v.name AS venue_name,
     v.description AS venue_description,
     v.capacity,
-    v.fee,
+    v.hourly_fee,
     getpercent(e.total_issued, v.capacity) AS percent_capacity,
     e.total_issued * e.price AS max_revenue,
     v.info_url, v.address, v.city, v.province, v.address_url
    FROM events e
      JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;
+
+-- here
+DROP FUNCTION IF EXISTS getOrderTotal (INTEGER);
+
+CREATE OR REPLACE FUNCTION getOrderTotal(pID INTEGER)
+    RETURNS numeric
+    LANGUAGE 'plpgsql'
+AS $BODY$
+  DECLARE result NUMERIC;
+  BEGIN
+    SELECT sum(oi.qty * e.price) INTO result
+    FROM orders o
+    JOIN order_items oi ON o.id = oi.order_id
+    JOIN events e ON oi.event_id = e.id
+    WHERE o.id = pID
+    GROUP BY o.id;
+
+  RETURN result;
+  END
+  $BODY$;
+
+-- 
 
 CREATE OR REPLACE VIEW order_details_vw
  AS
@@ -146,16 +171,12 @@ CREATE OR REPLACE VIEW order_details_vw
     e.event_date,
     e.event_time,
     e.duration,
+    e.url_image AS event_img,
     oi.qty,
     e.price,
     oi.qty * e.price AS line_total,
     oi.event_id,
-    ( SELECT sum(oi2.qty * e2.price) AS sum
-           FROM orders o2
-             JOIN order_items oi2 ON o2.id = oi2.order_id
-             JOIN events e2 ON oi2.event_id = e2.id
-          WHERE o2.id = o.id
-          GROUP BY o2.id) AS order_total
+    getOrderTotal(o.id) AS order_total
    FROM orders o
      JOIN order_items oi ON o.id = oi.order_id
      JOIN events e ON oi.event_id = e.id
@@ -163,18 +184,18 @@ CREATE OR REPLACE VIEW order_details_vw
   ORDER BY o.order_date DESC, o.id, oi.id;
 
   -- CRUD functions
-DROP FUNCTION IF EXISTS adduser(character varying,character varying,character varying,character varying);
+DROP FUNCTION IF EXISTS adduser(CHARACTER varying,CHARACTER varying,CHARACTER varying,CHARACTER varying);
 
 CREATE OR REPLACE FUNCTION addUser (
-  pFirst_name varchar(30),
-  pLast_name varchar(50),
-  pEmail varchar(100),
-  pPwd varchar(100)
+  pFirst_name VARCHAR(30),
+  pLast_name VARCHAR(50),
+  pEmail VARCHAR(100),
+  pPwd VARCHAR(100)
 )
-  RETURNS varchar(6)
+  RETURNS VARCHAR(6)
   AS
   $$
-    DECLARE userHandle varchar (6);
+    DECLARE userHandle VARCHAR (6);
     BEGIN
 
     SELECT handle INTO userhandle FROM users WHERE email = pEmail;
@@ -188,17 +209,19 @@ CREATE OR REPLACE FUNCTION addUser (
 
     RETURN userHandle;
 
-    END
-    $$
-    LANGUAGE plpgsql;
+  END
+  $$
+  LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION userLogin (pEmail varchar(100), pPwd varchar(100))
+DROP FUNCTION IF EXISTS userLogin(CHARACTER varying, CHARACTER varying);
+
+CREATE OR REPLACE FUNCTION userLogin (pEmail VARCHAR(100), pPwd VARCHAR(100))
   RETURNS TABLE(
-    id integer,
-    first_name varchar(30),
-    last_name varchar(50),
-    email varchar(100),
-    handle varchar(6)
+    id INTEGER,
+    first_name VARCHAR(30),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    handle VARCHAR(6)
     ) 
 AS $$
 BEGIN
