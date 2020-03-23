@@ -10,10 +10,10 @@ module.exports = db => {
           INSERT INTO users (first_name, last_name, email, password) 
           VALUES ($1, $2, $3, $4) RETURNING *;
          `, [request.body.first_name, request.body.last_name, request.body.email, request.body.password])
-         .then(({ rows: users }) => { response.json(users) })
+         .then(({ rows: users }) => { response.status(201).json(users) })
          .catch(e => console.error(e.stack));
       } else {
-        response.json({message: `User already registered`});
+        response.status(409).json({message: `User already registered`});
       }
     })
   });
@@ -26,7 +26,7 @@ module.exports = db => {
       SELECT * FROM users WHERE email = $1 and password = $2;
      `, [ request.body.email,
           request.body.password ])
-     .then(({ rows: users }) => { response.json(users) })
+     .then(({ rows: users }) => { response.status(200).json(users) })
      .catch(e => console.error(e.stack));
   });
 
@@ -44,7 +44,7 @@ module.exports = db => {
         request.body.new_email,
         request.body.new_password
      ])
-     .then(({ rows: users }) => { response.json(users) })
+     .then(({ rows: users }) => { response.status(200).json(users) })
      .catch(e => console.error(e.stack));
   });
 

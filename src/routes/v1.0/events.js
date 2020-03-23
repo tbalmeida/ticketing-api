@@ -9,7 +9,7 @@ module.exports = db => {
       FROM events_vw
      `)
     .then(({ rows: events }) => {
-      response.json(events);
+      response.status(200).json(events);
     })
     .catch(e => console.error(e.stack));
   });
@@ -21,7 +21,7 @@ module.exports = db => {
       SELECT *
       FROM events_vw
       WHERE event_id = $1`, [request.params.id])
-    .then(({ rows: events }) => { response.json(events) })
+    .then(({ rows: events }) => { response.status(200).json(events) })
     .catch(e => console.error(e.stack));
   });
 
@@ -49,7 +49,7 @@ module.exports = db => {
           request.body.total_issued,
           request.body.limit_per_user,
           request.body.price ])
-    .then(({ rows: events }) => { response.json(events) })
+    .then(({ rows: events }) => { response.status(201).json(events) })
     .catch(e => console.error(e.stack));
   });
 
@@ -69,7 +69,7 @@ module.exports = db => {
           request.body.total_issued,
           request.body.limit_per_user,
           request.body.price ])
-    .then(({ rows: events }) => { response.json(events) })
+    .then(({ rows: events }) => { response.status(201).json(events) })
     .catch(e => console.error(e.stack));
   });
 
@@ -79,7 +79,13 @@ module.exports = db => {
     db.query(`
       DELETE FROM events WHERE id = $1;
       `, [ request.params.id ])
-    .then(() => response.status(200).send("Event deleted successfully"))
+      .then((result) => {
+        if (result.rowCount !== 0) {
+          response.status(200).json({message: "Event deleted successfully"});
+        } else {
+          response.status(204).json({message: "Event not found."});
+        }
+    })
     .catch(e => console.error(e.stack));
   });
 

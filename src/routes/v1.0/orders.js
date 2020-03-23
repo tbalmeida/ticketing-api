@@ -9,7 +9,7 @@ module.exports = db => {
       FROM orders_vw
      `)
      .then(({ rows: orders }) => {
-      response.json(orders);
+      response.status(200).json(orders);
     });
   });
 

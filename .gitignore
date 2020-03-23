@@ -3,6 +3,6 @@
 .env
 .env.development
 .env.test
-
+qr_code/
 node_modules/
 coverage/
