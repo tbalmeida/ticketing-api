@@ -2,15 +2,20 @@ const router = require("express").Router();
 
 module.exports = db => {
 
-  
-  // New user
   router.put("/signup", (request, response) => {
-    db.query(`
-      INSERT INTO users (first_name, last_name, email, password) 
-      VALUES ($1, $2, $3, $4) RETURNING *;
-     `, [request.body.first_name, request.body.last_name, request.body.email, request.body.password])
-     .then(({ rows: users }) => { response.json(users) })
-     .catch(e => console.error(e.stack));
+    db.query(`SELECT COUNT(id) as total FROM users WHERE email = $1`, [request.body.email])
+    .then(({rows}) => { 
+      if (rows[0].total == 0) {
+        db.query(`
+          INSERT INTO users (first_name, last_name, email, password) 
+          VALUES ($1, $2, $3, $4) RETURNING *;
+         `, [request.body.first_name, request.body.last_name, request.body.email, request.body.password])
+         .then(({ rows: users }) => { response.json(users) })
+         .catch(e => console.error(e.stack));
+      } else {
+        response.json({message: `User already registered`});
+      }
+    })
   });
 
   // select * from users where email = 'john@fake.com' and password = '123'
