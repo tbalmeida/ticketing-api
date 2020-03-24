@@ -38,7 +38,8 @@ module.exports = db => {
         venue = $7,
         total_issued = $8,
         limit_per_user = $9,
-        price = $10
+        price = $10,
+        url_image = $11
       WHERE id = $1 RETURNING *;
      `, [ request.params.id,
           request.body.title,
@@ -49,7 +50,8 @@ module.exports = db => {
           request.body.venue,
           request.body.total_issued,
           request.body.limit_per_user,
-          request.body.price ])
+          request.body.price,
+          request.body.url_image ])
     .then(({ rows: events }) => { response.json(events) })
     .catch(e => console.error(e.stack));
   });
@@ -58,8 +60,8 @@ module.exports = db => {
   router.post("/events/new", (request, response) => {
     console.log("here", request.body)
     db.query(`
-      INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image )
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *;
       `, [request.body.title,
           request.body.description,
@@ -69,7 +71,8 @@ module.exports = db => {
           request.body.venue,
           request.body.total_issued,
           request.body.limit_per_user,
-          request.body.price ])
+          request.body.price,
+          request.body.url_image ])
     .then(({ rows: events }) => { response.json(events) })
     .catch(e => console.error(e.stack));
   });

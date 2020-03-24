@@ -4,7 +4,7 @@ module.exports = db => {
   // route to get all the venues
   router.get("/venues", (request, response) => {
     db.query(`
-      SELECT id, name, description, capacity, fee, info_url, address_url, address, city, province
+      SELECT id, name, description, capacity, hourly_fee, info_url, address_url, address, city, province
       FROM venues
       ORDER BY name ASC
      `)
@@ -17,7 +17,7 @@ module.exports = db => {
   // get an especific venue
   router.get("/venues/:id", (request, response) => {
     db.query(`
-      SELECT id, name, description, capacity, fee
+      SELECT id, name, description, capacity, hourly_fee, info_url, address, city, province, address_url
       FROM venues
       WHERE id = $1::integer
      `, [request.params.id])
@@ -43,12 +43,17 @@ module.exports = db => {
   // Create a new venue
   router.put("/venues/new", (request, response) => {
     db.query(`
-      INSERT INTO venues (name, description, capacity, fee) VALUES ($1, $2, $3, $4)
+      INSERT INTO venues (name, description, capacity, hourly_fee, info_url, address, city, province, address_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *;
-      `, [ request.body.name, 
+      `, [request.body.name, 
           request.body.description, 
           request.body.capacity, 
-          request.body.fee ])
+          request.body.hourly_fee,
+          request.body.info_url,
+          request.body.address,
+          request.body.city,
+          request.body.province,
+          request.body.address_url ])
     .then(({ rows: venues }) => {
       response.json(venues);
     })
@@ -59,13 +64,19 @@ module.exports = db => {
   router.patch("/venues/:id", (request, response) => {
     db.query(`
       UPDATE venues 
-      SET name = $2, description = $3, capacity = $4, fee = $5
+      SET name = $2, description = $3, capacity = $4, hourly_fee = $5, info_url = $6,
+        address = $7, province = $8, address_url = $9
       WHERE id = $1 RETURNING *;
       `, [ request.params.id,
           request.body.name, 
           request.body.description, 
           request.body.capacity, 
-          request.body.fee ])
+          request.body.hourly_fee,
+          request.body.info_url,
+          request.body.address,
+          request.body.city,
+          request.body.province,
+          request.body.address_url ])
     .then(({ rows: venues }) => {
       response.json(venues);
     })
