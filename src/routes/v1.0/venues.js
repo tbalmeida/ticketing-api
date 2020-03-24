@@ -4,11 +4,7 @@ module.exports = db => {
   // route to get all the venues
   router.get("/venues", (request, response) => {
     db.query(`
-<<<<<<< HEAD
       SELECT id, name, description, capacity, fee, info_url, address_url, address, city, province
-=======
-      SELECT id, name, description, capacity, hourly_fee
->>>>>>> routes
       FROM venues
       ORDER BY name ASC
      `)
@@ -81,19 +77,11 @@ module.exports = db => {
     db.query(`
       DELETE FROM venues WHERE id = $1; 
       `, [ request.params.id ])
-<<<<<<< HEAD
     .then((res) => {
       if (res.rowCount >= 1) {
         response.status(200).json({message: "Venue deleted successfully"})
       } else {
         response.status(404).json({message: "Venue not found. Please, check if the proper venue was selected."})
-=======
-    .then((result) => {
-      if (result.rowCount !== 0) {
-        response.status(200).json({message: "Venue deleted successfully"});
-      } else {
-        response.status(204).json({message: "Venue not found."});
->>>>>>> routes
       }
     })
     .catch(e => console.error(e.stack));
