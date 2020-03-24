@@ -50,14 +50,9 @@ module.exports = db => {
           request.body.venue,
           request.body.total_issued,
           request.body.limit_per_user,
-<<<<<<< HEAD
-          request.body.price ])
-    .then(({ rows: events }) => { response.status(201).json(events) })
-=======
           request.body.price,
           request.body.url_image ])
     .then(({ rows: events }) => { response.json(events) })
->>>>>>> db/incremental
     .catch(e => console.error(e.stack));
   });
 
