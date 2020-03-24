@@ -22,13 +22,17 @@ module.exports = db => {
   // User login
   router.post("/login", (request, response) => {
     console.log("Check:", request.body);
-    db.query(`
-      SELECT * FROM users WHERE email = $1 and password = $2;
-     `, [ request.body.email,
-          request.body.password ])
-     .then(({ rows: users }) => { response.status(200).json(users) })
-     .catch(e => console.error(e.stack));
-  });
+    db.query(`SELECT handle, id, first_name, last_name, email FROM users WHERE email = $1 and password = $2;`
+      , [ request.body.email, request.body.password ])
+    .then(({ rows: users }) => {
+      if (users.length !== 0) {
+        response.json(users)
+      } else {
+        response.status(404).json({message: "User not found. Please, verify the email and password provided."})
+      }
+    })
+    .catch(e => console.error(e.stack));
+    });
 
   // User update
   router.patch("/user/:id", (request, response) => {
