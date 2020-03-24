@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "API server for Ticketing for Good - LHL final project",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon ./src/index.js",
@@ -33,5 +33,14 @@
     "setupFilesAfterEnv": [
       "<rootDir>/src/setupTests.js"
     ]
+  },
+  "nodemon": {
+    "name": "nodemon",
+    "homepage": "http://nodemon.io",
+    "...": "... other standard package.json values",
+    "nodemonConfig": {
+      "ignore": ["test/*", "docs/*"],
+      "delay": "2500"
+    }
   }
 }
