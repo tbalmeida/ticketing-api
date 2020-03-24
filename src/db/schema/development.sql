@@ -19,7 +19,7 @@ ALTER SEQUENCE venues_id_seq RESTART WITH 6;
 -- Events
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('2020 Town Hall', 'First event of the year! We will present the planning for this year, accounts from previous year and share some exciting news. Please, join us.', 
- '2020-01-10', '19:00', '2:00', 1, 330, 10, 15, '');
+ '2020-01-10', '19:00', '2:00', 1, 330, 10, 15, 'https://www.osrvacation.com/mice/wp-content/uploads/2016/12/conf-hall.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Jan 18 - Employment hunt workshop - Interview skills', 'Fancy getting useful tips about interview skills and Canadian office culture? Join us for this event and sharpen your skill.', 
