@@ -11,11 +11,11 @@ module.exports = db => {
           VALUES ($1, $2, $3, $4) RETURNING *;
          `, [request.body.first_name, request.body.last_name, request.body.email, request.body.password])
          .then(({ rows: users }) => { response.status(201).json(users) })
-         .catch(e => console.error(e.stack));
-      } else {
-        response.status(409).json({message: `User already registered`});
-      }
-    })
+        } else {
+          response.status(409).json({message: `User already registered`});
+        }
+      })
+    .catch(e => console.error(e.stack));
   });
 
   // select * from users where email = 'john@fake.com' and password = '123'
