@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const sendMsg = require( "../../helper/emailHelper");
+const paymentIntent = require('../../payment_intents');
 
 module.exports = db => {
+
+  router.post("/payment_intents", paymentIntent);
   // route to get all the orders. Should be protected, only for system
   router.get("/orders", (request, response) => {
     db.query(
