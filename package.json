@@ -15,6 +15,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^7.0.0",
+    "ejs": "^3.0.1",
     "express": "^4.16.4",
     "googleapis": "^48.0.0",
     "helmet": "^3.18.0",
@@ -22,6 +23,7 @@
     "pg": "^7.8.1",
     "qrcode": "^1.4.4",
     "socket.io": "^2.2.0",
+    "stripe": "^8.35.0",
     "ws": "^7.0.0"
   },
   "devDependencies": {
@@ -39,7 +41,10 @@
     "homepage": "http://nodemon.io",
     "...": "... other standard package.json values",
     "nodemonConfig": {
-      "ignore": ["test/*", "docs/*"],
+      "ignore": [
+        "test/*",
+        "docs/*"
+      ],
       "delay": "2500"
     }
   }
