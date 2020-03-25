@@ -18,7 +18,7 @@ module.exports = db => {
 
   router.put("/orders/new", (request, response) => {
     try {
-    const { amount  } = req.body;
+    const { amount  } = request.body;
       //database needs to save the purchase info
       // Psst. For production-ready applications we recommend not using the
       // amount directly from the client without verifying it first. This is to
@@ -29,10 +29,10 @@ module.exports = db => {
 
       const paymentIntent = await stripe.paymentIntents.create({ amount, currency: "cad" });
 
-      res.status(200).send(paymentIntent.client_secret);
+      response.status(200).send(paymentIntent.client_secret);
     } catch (err) {
       console.log("err", err)
-      res.status(500).json({ statusCode: 500, message: err.message });
+      response.status(500).json({ statusCode: 500, message: err.message });
     }
   });
 
