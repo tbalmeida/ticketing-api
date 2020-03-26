@@ -130,7 +130,9 @@ CREATE OR REPLACE VIEW events_vw
     v.hourly_fee,
     getpercent(e.total_issued, v.capacity) AS percent_capacity,
     e.total_issued * e.price AS max_revenue,
-    v.info_url, v.address, v.city, v.province, v.address_url
+    v.info_url, v.address, v.city, v.province, v.address_url,
+    TO_CHAR(e.event_date, 'MON-dd-yyyy') as str_event_date,
+    TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time
    FROM events e
      JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;
@@ -176,7 +178,11 @@ CREATE OR REPLACE VIEW order_details_vw
     e.price,
     oi.qty * e.price AS line_total,
     oi.event_id,
-    getOrderTotal(o.id) AS order_total
+    getOrderTotal(o.id) AS order_total,
+    TO_CHAR(e.event_date, 'MON-dd-yyyy') as str_event_date,
+    TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time,
+    TO_CHAR(o.order_date, 'MON-dd-yyyy') as str_order_date,
+    CAST(price AS DECIMAL) AS vl_price
    FROM orders o
      JOIN order_items oi ON o.id = oi.order_id
      JOIN events e ON oi.event_id = e.id

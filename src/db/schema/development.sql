@@ -74,7 +74,7 @@ INSERT INTO orders (user_id, order_date) VALUES (4, '2020-01-07');
 
 INSERT INTO orders (user_id, order_date) VALUES (5, '2020-01-04');
   INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 2, 4);
-  INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 2, 4);
+  INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 6, 4);
 
 ALTER SEQUENCE orders_id_seq RESTART WITH 4;
 ALTER SEQUENCE order_items_id_seq RESTART WITH 7;
