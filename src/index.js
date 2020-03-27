@@ -5,18 +5,18 @@ const ENV = require("./environment");
 const app = require("./application")(ENV);
 const server = require("http").Server(app);
 
-const WebSocket = require("ws");
-const wss = new WebSocket.Server({ server });
+// const WebSocket = require("ws");
+// const wss = new WebSocket.Server({ server });
 
-wss.on("connection", socket => {
-  socket.onmessage = event => {
-    console.log(`Message Received: ${event.data}`);
+// wss.on("connection", socket => {
+//   socket.onmessage = event => {
+//     console.log(`Message Received: ${event.data}`);
 
-    if (event.data === "ping") {
-      socket.send(JSON.stringify("pong"));
-    }
-  };
-});
+//     if (event.data === "ping") {
+//       socket.send(JSON.stringify("pong"));
+//     }
+//   };
+// });
 
 // function updateAppointment(id, interview) {
 //   wss.clients.forEach(function eachClient(client) {
