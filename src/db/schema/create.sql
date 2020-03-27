@@ -6,6 +6,7 @@ DROP VIEW IF EXISTS order_details_vw;
 DROP TABLE IF EXISTS attendance CASCADE;
 DROP TABLE IF EXISTS order_items CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS order_status CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS venues CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -66,7 +67,7 @@ CREATE TABLE venues (
 
 CREATE TABLE events (
   id SERIAL PRIMARY KEY NOT NULL,
-  title VARCHAR(100) UNIQUE NOT NULL,
+  title VARCHAR(100) NOT NULL,
   description VARCHAR(500) NOT NULL,
   event_date DATE NOT NULL,
   event_time TIME NOT NULL,
@@ -88,10 +89,16 @@ CREATE TABLE users (
   handle VARCHAR(6) DEFAULT 'u' || md5handle(5)
 );
 
+CREATE TABLE order_status (
+  id SERIAL PRIMARY KEY NOT NULL,
+  status VARCHAR(10) NOT NULL
+);
+
 CREATE TABLE orders (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id INTEGER REFERENCES users(id) NOT NULL,
-  order_date DATE NOT NULL,
+  order_date DATE NOT NULL DEFAULT NOW(),
+  status INTEGER REFERENCES order_status(id) NOT NULL,
   conf_code VARCHAR(10) DEFAULT 'o' || md5handle(9)
 );
 
@@ -182,11 +189,13 @@ CREATE OR REPLACE VIEW order_details_vw
     TO_CHAR(e.event_date, 'MON-dd-yyyy') as str_event_date,
     TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time,
     TO_CHAR(o.order_date, 'MON-dd-yyyy') as str_order_date,
-    CAST(price AS DECIMAL) AS vl_price
+    CAST(price AS DECIMAL) AS vl_price,
+    os.status
    FROM orders o
      JOIN order_items oi ON o.id = oi.order_id
      JOIN events e ON oi.event_id = e.id
      JOIN users u ON o.user_id = u.id
+     JOIN order_status os ON o.status = os.id
   ORDER BY o.order_date DESC, o.id, oi.id;
 
   -- CRUD functions

@@ -61,20 +61,27 @@ INSERT INTO users (first_name, last_name, email, password) VALUES ('Dianne', 'Bl
 
 ALTER SEQUENCE users_id_seq RESTART WITH 6;
 
+
+-- Order status
+INSERT INTO order_status (status) VALUES ('Pending'), ('Complete'), ('Cancelled');
+
+ALTER SEQUENCE order_status_id_seq RESTART WITH 4;
+
+
 -- Orders
-INSERT INTO orders (user_id, order_date) VALUES (1, '2020-01-04');
+INSERT INTO orders (user_id, order_date, status) VALUES (1, '2020-01-04', 2);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (1, 1, 3);
 
-INSERT INTO orders (user_id, order_date) VALUES (3, '2020-01-06');
+INSERT INTO orders (user_id, order_date, status) VALUES (3, '2020-01-06', 2);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 2, 1);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (2, 3, 2);
 
-INSERT INTO orders (user_id, order_date) VALUES (4, '2020-01-07');
+INSERT INTO orders (user_id, order_date, status) VALUES (4, '2020-01-07', 2);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (3, 1, 2);
 
-INSERT INTO orders (user_id, order_date) VALUES (5, '2020-01-04');
+INSERT INTO orders (user_id, order_date, status) VALUES (5, '2020-01-04', 2);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 2, 4);
   INSERT INTO order_items (order_id, event_id, qty) VALUES (4, 6, 4);
 
-ALTER SEQUENCE orders_id_seq RESTART WITH 4;
+ALTER SEQUENCE orders_id_seq RESTART WITH 5;
 ALTER SEQUENCE order_items_id_seq RESTART WITH 7;
