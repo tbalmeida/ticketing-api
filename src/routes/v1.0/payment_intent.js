@@ -1,5 +1,6 @@
 const Stripe = require("stripe");
 const db = require("../../db");
+const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
 
@@ -10,11 +11,12 @@ module.exports = async (req, res) => {
       // console.log("req.body", cartItems)
 
       // gets the user.id to create an order
-      const vUser = await db.query('SELECT id FROM users WHERE handle = $1', [handle])
+      const vUser = await db.query('SELECT id, email FROM users WHERE handle = $1', [handle])
 
       // Check for valid user and cart
       if (cartItems.length > 0 && vUser.rowCount === 1 ) {
         const userID = vUser.rows[0].id;
+        const userEmail = vUser.rows[0].email;
         let sqlOrderItems = ``;
 
         // checks the total value
@@ -43,8 +45,14 @@ module.exports = async (req, res) => {
 
         const vOrderItems = await db.query(sqlOrderItems);
 
+        // email confirmation
+        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
+
+        const textMsg = textReceipt(orderDetails.rows);
+        const htmlMsg = htmlReceipt(orderDetails.rows);
+        sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+
         // res.status(200).send("All good!")
-        // console.log(paymentIntent);
         res.status(200).send(paymentIntent.client_secret);
 
       }
