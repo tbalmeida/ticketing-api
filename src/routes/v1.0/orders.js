@@ -7,8 +7,8 @@ module.exports = db => {
   router.post("/payment_intents", paymentIntent);
   // route to get all the orders. Should be protected, only for system
   router.get("/orders", (request, response) => {
-    db.query(
-      `
+    db.query(`
+      
       SELECT *
       FROM orders_vw
      `)

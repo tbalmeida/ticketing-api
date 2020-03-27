@@ -1,12 +1,12 @@
 const Stripe = require("stripe");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
-// console.log("stripe", stripe)
 
 module.exports = async (req, res) => {
   if (req.method === "POST") {
     try {
-      const { amount,  } = req.body;
+      const { amount, cartItems, handle } = req.body;
+      console.log("req.body", req.body)
 
       //database needs to save the purchase info
 
