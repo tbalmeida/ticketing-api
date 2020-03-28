@@ -5,7 +5,7 @@ const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper
 const stripe = new Stripe(process.env.SECRET_KEY);
 
 module.exports = async (req, res) => {
-  if (req.method === "PUT") {
+  if (req.method === "POST") {
     try {
       const { amount, cartItems, handle } = req.body;
       // console.log("req.body", cartItems)
@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
     }
 
   } else {
-    res.setHeader("Allow", "PUT");
+    res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");
   }
 };

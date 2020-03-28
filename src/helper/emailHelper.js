@@ -58,7 +58,7 @@ function htmlReceipt(data) {
   `<tbody>`
 
 	data.forEach(e => {
-		msgReceipt += `<tr><td>${e.title}<br>${e.str_event_date} at ${e.str_event_time}}</td>` +
+		msgReceipt += `<tr><td>${e.title}<br>${e.str_event_date} at ${e.str_event_time}</td>` +
 		`<td>${e.qty}</td> <td align=right>${e.price}</td> <td align=right>${e.line_total}</td></tr>`
 		orderTotal += (e.qty * e.vl_price);
 	});

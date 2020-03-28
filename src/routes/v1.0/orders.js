@@ -6,7 +6,7 @@ const ENV = require("../../environment");
 module.exports = db => {
 
   // process payment and saves the order on the DB
-  router.put("/orders/new", paymentIntent);
+  router.post("/orders/new", paymentIntent);
 
   // route to get all the orders. Should be protected, only on Dev/Test
   if (ENV === "development") {
