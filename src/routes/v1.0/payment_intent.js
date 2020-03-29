@@ -50,11 +50,13 @@ module.exports = async (req, res) => {
 
         const textMsg = textReceipt(orderDetails.rows);
         const htmlMsg = htmlReceipt(orderDetails.rows);
-        sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+        sendMsg("tbalmeida@gmail.com", 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
 
         // res.status(200).send("All good!")
         res.status(200).send(paymentIntent.client_secret);
 
+      } else {
+        res.status(500).json({ statusCode: 500, message: "Please, verify your cart and credentials." });
       }
 
     } catch (err) {
