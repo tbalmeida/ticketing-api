@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
 
         const textMsg = textReceipt(orderDetails.rows);
         const htmlMsg = htmlReceipt(orderDetails.rows);
-        sendMsg("tbalmeida@gmail.com", 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+        sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
 
         // res.status(200).send("All good!")
         res.status(200).send(paymentIntent.client_secret);
