@@ -190,10 +190,13 @@ CREATE OR REPLACE VIEW order_details_vw
     TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time,
     TO_CHAR(o.order_date, 'MON-dd-yyyy') as str_order_date,
     CAST(price AS DECIMAL) AS vl_price,
-    os.status
+    os.status,
+    CONCAT(o.conf_code,'|',oi.conf_code, '|', to_char(e.event_date::timestamp with time zone, 'yyyy-mm-dd hh:mi'::text), '|', e.title) as qr_code,
+	  v.name AS venue, v.address, v.city, v.province 
    FROM orders o
      JOIN order_items oi ON o.id = oi.order_id
      JOIN events e ON oi.event_id = e.id
+     JOIN venues v ON e.venue = v.id
      JOIN users u ON o.user_id = u.id
      JOIN order_status os ON o.status = os.id
   ORDER BY o.order_date DESC, o.id, oi.id;

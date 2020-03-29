@@ -19,35 +19,35 @@ ALTER SEQUENCE venues_id_seq RESTART WITH 6;
 -- Events
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('2020 Town Hall', 'First event of the year! We will present the planning for this year, accounts from previous year and share some exciting news. Please, join us.', 
- '2020-01-10', '19:00', '2:00', 1, 330, 10, 15, 'https://www.osrvacation.com/mice/wp-content/uploads/2016/12/conf-hall.png');
+ '2020-04-10', '19:00', '2:00', 1, 330, 10, 15, 'https://www.osrvacation.com/mice/wp-content/uploads/2016/12/conf-hall.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Jan 18 - Employment hunt workshop - Interview skills', 'Fancy getting useful tips about interview skills and Canadian office culture? Join us for this event and sharpen your skill.', 
- '2020-01-18', '10:00', '2:00', 2, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
+ '2020-04-18', '10:00', '2:00', 2, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Feb 1st - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
- '2020-02-01', '10:00', '2:00', 4, 40, 2, 15, 'https://ualr.edu/economics/files/2014/01/hire_me_icon_256.png');
+ '2020-05-01', '10:00', '2:00', 4, 40, 2, 15, 'https://ualr.edu/economics/files/2014/01/hire_me_icon_256.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Feb 15 - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
- '2020-02-15', '10:00', '2:00', 4, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
+ '2020-05-15', '10:00', '2:00', 4, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Feb 29 - Financial Literacy', 'This event aims to provide some insight about the Canadian Financial Market. Learn about TFSA, RRSP, Stocks and money-related advice. For independency purposes, there will be no products being advertised.', 
- '2020-02-29', '10:00', '2:00', 4, 40, 2, 15, 'https://www.st-clair.net/Data/Sites/29/media/Co-op%20Course/Pictures/Blue%20Pics/dollar.png');
+ '2020-05-29', '10:00', '2:00', 4, 40, 2, 15, 'https://www.st-clair.net/Data/Sites/29/media/Co-op%20Course/Pictures/Blue%20Pics/dollar.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Mar 14 - Employment hunt workshop - Interview skills', 'Fancy getting useful tips about interview skills and Canadian office culture? Join us for this event and sharpen your skill.', 
- '2020-03-14', '10:00', '2:00', 2, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
+ '2020-06-14', '10:00', '2:00', 2, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Mar 28 - Employment hunt workshop', 'Looking for a job and need some help rewriting your resume, cover letters and Canadian office culture? Seek no more, join us for a workshop. We provide it every other week.', 
- '2020-02-28', '10:00', '2:00', 4, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
+ '2020-05-28', '10:00', '2:00', 4, 40, 2, 15, 'https://cdn.iconscout.com/icon/premium/png-256-thumb/job-interview-4-486239.png');
 
 INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image)
  VALUES ('Apr 11 - Social Networking Skills', 'We will talk about social networks can help you land a good job and learn some tips from recruiters?', 
- '2020-04-11', '10:00', '2:00', 4, 40, 2, 15, 'https://socialmedia4us.files.wordpress.com/2012/09/blueprint-social-15.png?w=584');
+ '2020-07-11', '10:00', '2:00', 4, 40, 2, 15, 'https://socialmedia4us.files.wordpress.com/2012/09/blueprint-social-15.png?w=584');
 
 ALTER SEQUENCE events_id_seq RESTART WITH 9;
 
