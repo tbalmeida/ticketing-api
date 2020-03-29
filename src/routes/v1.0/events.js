@@ -5,13 +5,8 @@ module.exports = db => {
   // route to get all the events
   router.get("/events", (request, response) => {
     console.log(request.body);
-    db.query(`
-      SELECT *
-      FROM events_vw
-     `)
-    .then(({ rows: events }) => {
-      response.status(200).json(events);
-    })
+    db.query(`SELECT * FROM events_vw WHERE event_date >= now()`)
+    .then(({ rows: events }) => {response.status(200).json(events);})
     .catch(e => console.error(e.stack));
   });
 

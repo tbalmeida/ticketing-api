@@ -1,6 +1,7 @@
 const Stripe = require("stripe");
 const db = require("../../db");
-const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
+const createTicket = require("../../helper/ticket");
+// const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
 
@@ -45,12 +46,14 @@ module.exports = async (req, res) => {
 
         const vOrderItems = await db.query(sqlOrderItems);
 
+        // createTicket(orderID);
         // email confirmation
-        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
+        // const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
 
-        const textMsg = textReceipt(orderDetails.rows);
-        const htmlMsg = htmlReceipt(orderDetails.rows);
-        sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+
+        // const textMsg = textReceipt(orderDetails.rows);
+        // const htmlMsg = htmlReceipt(orderDetails.rows);
+        // sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
 
         // res.status(200).send("All good!")
         res.status(200).send(paymentIntent.client_secret);
