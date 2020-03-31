@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/src/helper/style.css" type="text/css" />
+  </head>
+  <body>
+  <div><h1>Ticketing 4 Good</h1></div>
+  
+  <div><p>Hello, ${order[0].first_name} ${order[0].last_name}! Thank you for joining us! Here you have your receipt.
+  </br>Please, keep this receipt for your records.</p></div>
+  
+  <div><p><b>Your Order</b>
+  </br><b>Date:</b> dd/mm/yyyy
+  <br><b>Confirmation code:</b> ${order[0].conf_code} 
+  </p></div>
+  
+  <div><p><table>
+  <tr>
+    <th>Event</th>
+    <th>Quantity</th>
+    <th>Price (each)</th>
+    <th>Total</th>
+  </tr>
+  <tr>
+    <td>${order[0].event}</td>
+    <td class="centerText">${order[0].qty}</td>
+    <td class="numberData">${order[0].price}</td>
+    <td class="numberData">${order[0].line_total}</td>
+  </tr>
+  <tr><tfoot>
+    <td colspan=3>Total</td>
+    <td class="numberData">$ ${order[0].total}</td>
+  </tr></tfoot>
+  </table>
+  <p><br></p></div>
+  
+  <div>
+  <p><hr class="dash"><br></p>
+  <h2>Tickets</h2>

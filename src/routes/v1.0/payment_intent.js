@@ -2,7 +2,7 @@ const Stripe = require("stripe");
 const db = require("../../db");
 const createTicket = require("../../helper/ticket");
 // const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
-
+const { getNewQRCode } = require("../../helper/qrCode");
 const stripe = new Stripe(process.env.SECRET_KEY);
 
 module.exports = async (req, res) => {
@@ -41,14 +41,19 @@ module.exports = async (req, res) => {
           sqlOrderItems += sqlOrderItems.length > 0 ? `, ` : ``;
           sqlOrderItems += `( ${orderID}, ${id}, ${quantity})`
         });
+        // adds the line items
         sqlOrderItems = `INSERT INTO order_items (order_id, event_id, qty) VALUES ` + sqlOrderItems + `;`
-        // console.log(sqlOrderItems);
-
         const vOrderItems = await db.query(sqlOrderItems);
 
-        // createTicket(orderID);
+        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
+        orderDetails.rows.map((item )=> getNewQRCode(item.qr_code, item.item_id, "tickets/qr_code/"));
+
+ 
+        let testPDF = setTimeout( () => createTicket(orderDetails.rows), 3000);
+        console.log("ok")
+
+
         // email confirmation
-        // const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
 
 
         // const textMsg = textReceipt(orderDetails.rows);
