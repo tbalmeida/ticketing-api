@@ -1,74 +1,47 @@
-'use strict';
-const fs = require('fs');
-const PDFDocument = require('./pdfkit_tables');
+"use strict";
+const fs = require("fs");
+const PDFDocument = require("./pdfkit_tables");
 const ENV = require("../environment");
 const db = require("../db/");
-const { sendMsg, textReceipt, htmlReceipt } = require( "./emailHelper");
 
-function createTicket(orderID) {
 
-  db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
-  .then(({rows: order}) => {
+module.exports = function createTicket(order) {
+  console.log("Ok", order.length)
+  const doc = new PDFDocument;
 
-    if (order.length > 0) {
-      console.log(order)
-      order.forEach(item => {
-        console.log(item.title);
+  doc.pipe(fs.createWriteStream(`./tickets/${order[0].conf_code}-${order[0].order_id}.pdf`));
+  
+  let line = 80;
+  let col = 20;
+  
+  order.map(item => {
+    for(let i = 1; i <= item.qty; i++){
 
-      })
-
-    } else {
-      throw new Error("Order not found.")
+      
+      doc
+      .image(`tickets/qr_code/qrc_${item.item_id}.png`,  col, line, {width: 100})
+      .font('Courier-Bold').text(item.title, col+110, line+13).moveDown(0.3)
+      .text(item.str_event_date + " " + item.str_event_time).moveDown(0.3)
+      .font('Courier').text(item.venue).moveDown(0.3)
+      .text(item.address + ' ' + item.city + '-' + item.province).moveDown(0.3)
+      .text('Ticket ' + i + ' of ' + item.qty);
+      line += 160;
+      // prints 4 tickets per page
+      if (i % 4 === 0 || i === 1) {
+        if (i > 1) {
+          doc.addPage(); 
+          line = 80;
+        }
+        // header
+        doc
+          .font('Courier-Bold').fontSize(15).text("Ticketing 4 Good", 20, 20, {align: "center"}, 15).moveDown(0.3)
+          .font('Courier').fontSize(12).text("Your tickets are here! Please, bring your ticket to gain access to the event.");
+        // reset the lines for new page
+      }
     }
-  })
-  .catch( err => {
-    console.log(err.stack);
-
   });
-return true
 
-  // const doc = new PDFDocument();
-
-  // email confirmation
-  // const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
-
-
-  // const textMsg = textReceipt(orderDetails.rows);
-  // const htmlMsg = htmlReceipt(orderDetails.rows);
-  // sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
-
-
-
-  // const vFile = 'oRSGFD';
-  // doc.pipe(fs.createWriteStream(`tickets/${data.test}.pdf`));
-
-  // const table0 = {
-  //     headers: ['Word', 'Comment', 'Summary'],
-  //     rows: [
-  //         ['Apple', 'Not this one', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla viverra at ligula gravida ultrices. Fusce vitae pulvinar magna.'],
-  //         ['Tire', 'Smells like funny', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla viverra at ligula gravida ultrices. Fusce vitae pulvinar magna.']
-  //     ]
-  // };
-
-  // doc.table(table0, {
-  //     prepareHeader: () => doc.font('Helvetica-Bold'),
-  //     prepareRow: (row, i) => doc.font('Helvetica').fontSize(12)
-  // });
-
-  // const table1 = {
-  //     headers: ['Country', 'Conversion rate', 'Trend'],
-  //     rows: [
-  //         ['Switzerland', '12%', '+1.12%'],
-  //         ['France', '67%', '-0.98%'],
-  //         ['England', '33%', '+4.44%']
-  //     ]
-  // };
-
-  // doc.moveDown().table(table1, 100, 350, { width: 300 });
-
-  // doc.end();
+  doc.end();
 }
 
-module.exports = { createTicket }
-
-createTicket( 2 );
+// createTicket(2);

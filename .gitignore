@@ -3,6 +3,7 @@
 .env
 .env.development
 .env.test
-qr_code/
+/tickets/
 node_modules/
 coverage/
+tickets/
