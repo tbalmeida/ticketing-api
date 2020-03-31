@@ -1,8 +1,8 @@
 const Stripe = require("stripe");
 const db = require("../../db");
 const createTicket = require("../../helper/ticket");
-const { sendMsgAttach, sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
-const { getNewQRCode } = require("../../helper/qrCode");
+const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
+
 const stripe = new Stripe(process.env.SECRET_KEY);
 
 module.exports = async (req, res) => {
@@ -32,9 +32,8 @@ module.exports = async (req, res) => {
         });
 
         // Creates the order on the db
-        const vOrder = await db.query(`INSERT INTO orders (user_id, order_date, status) VALUES ( ${userID}, now(), 2) RETURNING id, conf_code;`)
+        const vOrder = await db.query(`INSERT INTO orders (user_id, order_date, status) VALUES ( ${userID}, now(), 2) RETURNING id;`)
         const orderID = vOrder.rows[0].id;
-        const orderCode = vOrder.rows[0].conf_code;
 
         cartItems.forEach(item => {
           let { id, quantity } = item;
@@ -42,23 +41,18 @@ module.exports = async (req, res) => {
           sqlOrderItems += sqlOrderItems.length > 0 ? `, ` : ``;
           sqlOrderItems += `( ${orderID}, ${id}, ${quantity})`
         });
-        // adds the line items
         sqlOrderItems = `INSERT INTO order_items (order_id, event_id, qty) VALUES ` + sqlOrderItems + `;`
+        // console.log(sqlOrderItems);
+
         const vOrderItems = await db.query(sqlOrderItems);
 
-        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
-        orderDetails.rows.map((item )=> getNewQRCode(item.qr_code, item.item_id, "tickets/qr_code/"));
-
-        // const testPDF = setTimeout( () => createTicket(orderDetails.rows), 3000);
-        // console.log(`${orderDetails.rows[0].conf_code}-${orderID}.pdf`)
-        // console.log("ok")
-
         // email confirmation
+        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
         const textMsg = textReceipt(orderDetails.rows);
         const htmlMsg = htmlReceipt(orderDetails.rows);
         sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
-        // const sendPDF = setTimeout( () => sendMsgAttach(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg, `${orderDetails.rows[0].conf_code}-${orderID}.pdf`), 6000);
-
+        
+        // createTicket(orderID);
         // res.status(200).send("All good!")
         res.status(200).send(paymentIntent.client_secret);
 

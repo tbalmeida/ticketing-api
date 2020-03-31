@@ -14,7 +14,7 @@ function sendMsg (to, subject, text, HTML) {
 		from: process.env.EMAIL, 
 		to: to,
 		bcc: 'ticketing4good@gmail.com',
-		subject: subject,
+		subject: 'bcc: ' + subject,
 		text: text,
 		html: HTML
 	};
