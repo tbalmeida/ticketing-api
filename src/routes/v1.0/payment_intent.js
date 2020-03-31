@@ -1,7 +1,7 @@
 const Stripe = require("stripe");
 const db = require("../../db");
 const createTicket = require("../../helper/ticket");
-// const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
+const { sendMsgAttach, sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
 const { getNewQRCode } = require("../../helper/qrCode");
 const stripe = new Stripe(process.env.SECRET_KEY);
 
@@ -32,8 +32,9 @@ module.exports = async (req, res) => {
         });
 
         // Creates the order on the db
-        const vOrder = await db.query(`INSERT INTO orders (user_id, order_date, status) VALUES ( ${userID}, now(), 2) RETURNING id;`)
+        const vOrder = await db.query(`INSERT INTO orders (user_id, order_date, status) VALUES ( ${userID}, now(), 2) RETURNING id, conf_code;`)
         const orderID = vOrder.rows[0].id;
+        const orderCode = vOrder.rows[0].conf_code;
 
         cartItems.forEach(item => {
           let { id, quantity } = item;
@@ -49,16 +50,17 @@ module.exports = async (req, res) => {
         orderDetails.rows.map((item )=> getNewQRCode(item.qr_code, item.item_id, "tickets/qr_code/"));
 
  
-        let testPDF = setTimeout( () => createTicket(orderDetails.rows), 3000);
+        const testPDF = setTimeout( () => createTicket(orderDetails.rows), 3000);
         console.log("ok")
 
 
         // email confirmation
-
-
-        // const textMsg = textReceipt(orderDetails.rows);
-        // const htmlMsg = htmlReceipt(orderDetails.rows);
+        const textMsg = textReceipt(orderDetails.rows);
+        const htmlMsg = htmlReceipt(orderDetails.rows);
+        console.log(`${orderDetails.rows[0].conf_code}-${orderID}.pdf`)
         // sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+        const sendPDF = setTimeout( () => sendMsgAttach('tbalmeida@gmail.com', 'Ticketing 4 Good - Your order', textMsg, htmlMsg, `${orderDetails.rows[0].conf_code}-${orderID}.pdf`)
+        , 6000);
 
         // res.status(200).send("All good!")
         res.status(200).send(paymentIntent.client_secret);

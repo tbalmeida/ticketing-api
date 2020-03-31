@@ -26,6 +26,39 @@ function sendMsg (to, subject, text, HTML) {
 	});
 };
 
+function sendMsgAttach (to, subject, text, HTML, PDF) {
+	
+	const transporter = nodemailer.createTransport({
+		service: 'gmail',
+		auth: {
+		user: process.env.EMAIL || 'ticketing4good@gmail.com', 
+		pass: process.env.PASSWORD || 'FinalProject'
+		}
+	});
+	
+	const mailOptions = {
+		from: process.env.EMAIL, 
+		to: to,
+		subject: subject,
+		text: text,
+		html: HTML,
+		attachments: [
+			{
+					filename: PDF,
+					path: `./tickets/${PDF}`, //path.join(__dirname, '../output/file-name.pdf'), // <= Here
+					contentType: 'application/pdf'
+			}
+	]
+	};
+	
+	transporter.sendMail(mailOptions, (err, data) => {
+		if (err) {
+			return console.log('Error:', err);
+		}
+			return console.log('Email sent!');
+	});
+};
+
 function textReceipt(data) {
 	
 	let orderTotal = 0;
@@ -123,4 +156,4 @@ function generateTicket(data) {
 	`
 }
 
-module.exports = {sendMsg, textReceipt, htmlReceipt, generateTicket };
+module.exports = {sendMsg, textReceipt, htmlReceipt, generateTicket, sendMsgAttach };

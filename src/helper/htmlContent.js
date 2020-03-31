@@ -1,3 +1,8 @@
+
+function htmlTicket(data) {
+  let html = ``;
+}
+
 const htmlTicket = `
 <html><head>
 <link rel="stylesheet" href="" media="all">
