@@ -97,7 +97,7 @@ function createReceipt(order, qtyItems, amount) {
 	</br><b>Date:</b> ${order[0].str_order_date}
 	<br><b>Confirmation code:</b> ${order[0].conf_code}|${order[0].order_id}
 	<br><b>Quantity:</b> ${qtyItems} 
-	<br><b>Total:</b> ${amount} 
+	<br><b>Total:</b> $ ${(amount/100).toFixed(2)} 
 	</p></div>`;
 
 	let msgReceipt = `<div><p><table style="width: 700px; font-size: 13px;">
@@ -139,7 +139,9 @@ function createReceipt(order, qtyItems, amount) {
 
 	// finalize html
 	msgReceipt += `</tbody><tfoot>
-	<tr><td colspan=2><b>Total</b></td><td style="text-align: right"><b>$ ${qtyItems}</b></td><td style="text-align: right"><b>$ ${(amount/100).toFixed(2)}</b></td>
+	<tr><td><b>Total</b></td>
+		<td style="text-align: right"><b> ${qtyItems}</b></td>
+		<td style="text-align: right" colspan=2><b>$ ${(amount/100).toFixed(2)}</b></td>
 	</tr></tfoot></table><p><br></p></div>`;
 
 	msgTickets += `</div></body></html>`

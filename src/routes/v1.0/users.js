@@ -26,12 +26,15 @@ module.exports = db => {
   router.post("/login", async (request, response) => {
     const user = await db.query(`SELECT handle, id, first_name, last_name, email, password FROM users WHERE email = $1;`
     , [request.body.email ]);
-    const isPasswordMatched = await bcrypt.compare(request.body.password, user.rows[0].password)
-    if(user.rows[0] && isPasswordMatched) {
-      return response.status(200).json(user.rows)
-    } else {
-      return response.status(404).json({message: "User not found. Please, verify the email and password provided."})
+  
+    if(user.rowCount > 0){
+      const isPasswordMatched = await bcrypt.compare(request.body.password, user.rows[0].password);
+      if (isPasswordMatched) {
+        return response.status(200).json(user.rows);
+      } 
     }
+    // user not found/match, return error
+    return response.status(500).json({message: "User not found. Please, verify the email and password provided."})
   });
 
   // User update
