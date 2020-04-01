@@ -3,7 +3,5 @@
 .env
 .env.development
 .env.test
-/tickets/
 node_modules/
 coverage/
-tickets/
