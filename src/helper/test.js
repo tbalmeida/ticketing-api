@@ -29,18 +29,7 @@ db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID])
     const amount = order.reduce((acc, item) => acc + (item.vl_price * item.qty), 0) * 100; 
 
     const msgConfig = `<html><header>
-    table {width: 700px; font-size: 13px;}
-    th {background-color: whitesmoke}
-    tfoot {font-weight: bold}
-    td {text-align: left}
-    
-    .numberData {text-align: right}
-    
-    .qr_code {width: 303px;text-align: center;vertical-align: middle}
-     
-    .dash{border: 0 none;border-top: 2px dashed #322f32;background: none;height:0} 
-    </style>
-
+    <title>Ticket 4 Good - Receipt</title>
     </header><body style="font-family: 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 100px; font-size: 13px; background-color: white;">`;
 
     const msgGreetings = `<div><p>Hello, ${order[0].first_name} ${order[0].last_name}! Thank you for joining us! Here you have your receipt.
