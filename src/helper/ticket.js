@@ -17,7 +17,6 @@ module.exports = function createTicket(order) {
   order.map(item => {
     for(let i = 1; i <= item.qty; i++){
 
-      
       doc
       .image(`tickets/qr_code/qrc_${item.item_id}.png`,  col, line, {width: 100})
       .font('Courier-Bold').text(item.title, col+110, line+13).moveDown(0.3)

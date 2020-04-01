@@ -1,7 +1,7 @@
 const Stripe = require("stripe");
 const db = require("../../db");
-const createTicket = require("../../helper/ticket");
-const { sendMsg, textReceipt, htmlReceipt } = require( "../../helper/emailHelper");
+// const createTicket = require("../../helper/ticket");
+const { sendMsg, textReceipt, htmlReceipt, createReceipt } = require( "../../helper/emailHelper");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
 
@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
 
         // checks the total value
         const amount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0) * 100;
+        const qtyItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
         // charges on Stripe
         const paymentIntent = await stripe.paymentIntents.create({
@@ -42,18 +43,19 @@ module.exports = async (req, res) => {
           sqlOrderItems += `( ${orderID}, ${id}, ${quantity})`
         });
         sqlOrderItems = `INSERT INTO order_items (order_id, event_id, qty) VALUES ` + sqlOrderItems + `;`
+        const vOrderItems = await db.query(sqlOrderItems);
         // console.log(sqlOrderItems);
 
-        const vOrderItems = await db.query(sqlOrderItems);
-
-        // email confirmation
-        const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
-        const textMsg = textReceipt(orderDetails.rows);
-        const htmlMsg = htmlReceipt(orderDetails.rows);
-        sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
         
-        // createTicket(orderID);
-        // res.status(200).send("All good!")
+        const order = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID]);
+        createReceipt(order.rows, qtyItems, amount);
+        
+        // email confirmation
+        // const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
+        // const textMsg = textReceipt(orderDetails.rows);
+        // const htmlMsg = htmlReceipt(orderDetails.rows);
+        // sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
+
         res.status(200).send(paymentIntent.client_secret);
 
       } else {

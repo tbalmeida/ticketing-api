@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
+const {getNewQRCode} = require("./qrCode");
 
-function sendMsg (to, subject, text, HTML) {
+function sendMsg (to, subject, text, HTML, arrayAttach =[]) {
 	
 	const transporter = nodemailer.createTransport({
 		service: 'gmail',
@@ -14,42 +15,10 @@ function sendMsg (to, subject, text, HTML) {
 		from: process.env.EMAIL, 
 		to: to,
 		bcc: 'ticketing4good@gmail.com',
-		subject: 'bcc: ' + subject,
-		text: text,
-		html: HTML
-	};
-	
-	transporter.sendMail(mailOptions, (err, data) => {
-		if (err) {
-			return console.log('Error:', err);
-		}
-			return console.log('Email sent!');
-	});
-};
-
-function sendMsgAttach (to, subject, text, HTML, PDF) {
-	
-	const transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-		user: process.env.EMAIL || 'ticketing4good@gmail.com', 
-		pass: process.env.PASSWORD || 'FinalProject'
-		}
-	});
-	
-	const mailOptions = {
-		from: process.env.EMAIL, 
-		to: to,
 		subject: subject,
 		text: text,
 		html: HTML,
-		attachments: [
-			{
-					filename: PDF,
-					path: `./tickets/${PDF}`, //path.join(__dirname, '../output/file-name.pdf'), // <= Here
-					contentType: 'application/pdf'
-			}
-	]
+		attachments: arrayAttach
 	};
 	
 	transporter.sendMail(mailOptions, (err, data) => {
@@ -104,57 +73,78 @@ function htmlReceipt(data) {
 // sendMsg('tbalmeida@gmail.com', `Order ${orders[0].order_id}`, conf_Msg)
 };
 
-function generateTicket(data) {
+function createReceipt(order, qtyItems, amount) {
+	// Creates an email with receipt and tickets for the order passed as argument
 
-	// "/src/helper/style.css"
-	const htmlTicket = `
-	<div><h1>Ticketing 4 Good</h1></div>
+	// saves the filenames of the newly created QR codes
+	const qrCodes = [];
+	const attachments = [];
 
-	<div><p>Hello, ${first_name} &{last_name}! Thank you for joining us! Here you have your receipt.
+	order.forEach((item) => {
+		for (let i = 1; i <= item.qty; i++) {
+			// creates a QR for each instance of ticket purchased
+			qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, `${item.item_id}_${i}`, "tickets/qr_code/"));
+		}
+	}); 
+
+	const msgConfig = `<html><header>
+	<title>Ticket 4 Good - Receipt</title>
+	</header><body style="font-family: 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 100px; font-size: 13px; background-color: white;">`;
+
+	const msgGreetings = `<div><p>Hello, ${order[0].first_name} ${order[0].last_name}! Thank you for joining us! Here you have your receipt.
 	</br>Please, keep this receipt for your records.</p></div>
-	
 	<div><p><b>Your Order</b>
-	</br><b>Date:</b> dd/mm/yyyy
-	<br><b>Confirmation code:</b> ${data.conf_code} 
-	</p></div>
-	
-	<div><p><table>
-	<tr>
-		<th>Event</th>
-		<th>Quantity</th>
-		<th>Price (each)</th>
-		<th>Total</th>
-	</tr>
-	<tr>
-		<td>${event}</td>
-		<td class="centerText">${qty}</td>
-		<td class="numberData">${price}</td>
-		<td class="numberData">${linte_total}</td>
-	</tr>
-	<tr><tfoot>
-		<td colspan=3>Total</td>
-		<td class="numberData">$ ${total}</td>
-	</tr></tfoot>
-	</table>
-	<p><br></p></div>
-	
-	<div>
-	<p><hr class="dash"><br></p>
-	<h2>Tickets</h2>`
-	
-	const ticketTable = `<p><table class="ticket">
-	<tr><td rowspan=4 class="qr_code">qr code</td></tr>
-	<tr>
-		<td>Event</td>
-		<td class="numberData">date/time</td>
-	</tr>
-	<tr><td colspan=2>Venue</td></tr>
-	<tr><td colspan=2>Address<br>City-Province</td></tr>
-	</table>
-	<br>Please present this ticket for admission
-	</p>
-	</div>
-	`
+	</br><b>Date:</b> ${order[0].str_order_date}
+	<br><b>Confirmation code:</b> ${order[0].conf_code}|${order[0].order_id}
+	<br><b>Quantity:</b> ${qtyItems} 
+	<br><b>Total:</b> ${amount} 
+	</p></div>`;
+
+	let msgReceipt = `<div><p><table style="width: 700px; font-size: 13px;">
+	<thead><tr style="background-color: whitesmoke">
+		 <th>Event</th>
+		 <th>Quantity</th>
+		 <th>Price (each)</th>
+		 <th>Total</th>
+	 </tr></thead>`
+
+	let msgTickets = `<div><p><hr style="border: 0 none;border-top: 2px dashed #322f32;background: none;height:0"><br></p><h2>Tickets</h2>`;
+
+	order.forEach(item => {
+		// complements the receipt table      
+		msgReceipt += ` <tr>
+			 <td>${item.title}</td>
+			 <td style="text-align: center">${item.qty}</td>
+				<td style="text-align: right">${item.price}</td>
+				<td style="text-align: right">${item.line_total}</td>
+			</tr>`;
+
+		for (let i = 1; i <= item.qty; i++) {
+			// creates a ticket for each instance of ticket purchased
+			// qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, item.item_id, "tickets/qr_code/"));
+			msgTickets += `<p><br><table style="border: 2px dashed #322f32; padding: 2px; width: 700px;">
+			<tr><td rowspan=4 style="text-align: center;vertical-align: middle; width: 200px"><img src="cid:qrc_${item.item_id}_${i}.png" /></td></tr>
+			<tr><td><b>${item.title}</b></td><td style="text-align: right"><b>${item.str_event_date} ${item.str_event_time}</b></td></tr>
+			<tr><td colspan=2 style="vertical-align: top">${item.venue}</td></tr>
+			<tr><td colspan=2 style="vertical-align: top">${item.address}<br>${item.city}-${item.province}</td></tr>
+			</table><br>Please present this ticket for admission</p>`;
+
+			attachments.push({
+				filename: `qrc_${item.item_id}_${i}.png`,
+				path: `tickets/qr_code/qrc_${item.item_id}_${i}.png`,
+				cid: `qrc_${item.item_id}_${i}.png`
+				});
+		}
+	});
+
+	// finalize html
+	msgReceipt += `</tbody><tfoot>
+	<tr><td colspan=2><b>Total</b></td><td style="text-align: right"><b>$ ${qtyItems}</b></td><td style="text-align: right"><b>$ ${(amount/100).toFixed(2)}</b></td>
+	</tr></tfoot></table><p><br></p></div>`;
+
+	msgTickets += `</div></body></html>`
+
+	sendMsg(order[0].email, "Ticketing 4 Good - Receipt", "Receipt from Ticketing 4 Good", msgGreetings + msgReceipt + msgTickets, attachments);
 }
 
-module.exports = {sendMsg, textReceipt, htmlReceipt, generateTicket, sendMsgAttach };
+module.exports = {sendMsg, textReceipt, htmlReceipt, createReceipt };
