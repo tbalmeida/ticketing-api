@@ -17,7 +17,7 @@ db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID])
     order.forEach((item) => {
       for (let i = 1; i <= item.qty; i++) {
         // creates a QR for each instance of ticket purchased
-        qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, item.item_id, "tickets/qr_code/"));
+        qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, `${item.item_id}_${i}`, "tickets/qr_code/"));
       }
     }); 
 
@@ -25,9 +25,8 @@ db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID])
   })
 
   .then(order => {  //Header
-
     // checks the total value
-    const amount = order.reduce((acc, item) => acc + (item.price * item.qty), 0) * 100; 
+    const amount = order.reduce((acc, item) => acc + (item.vl_price * item.qty), 0) * 100; 
 
     const msgConfig = `<html><header>
     table {width: 700px; font-size: 13px;}
@@ -58,12 +57,7 @@ db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID])
        <th>Quantity</th>
        <th>Price (each)</th>
        <th>Total</th>
-     </tr></thead>
-     <tfoot><tr>
-       <td colspan=3>Total</td>
-       <td style="text-align: right">$ ${order[0].order_total}</td>
-     </tr></tfoot>
-     <tbody>`
+     </tr></thead>`
 
     let msgTickets = `<div><p><hr style="border: 0 none;border-top: 2px dashed #322f32;background: none;height:0"><br></p><h2>Tickets</h2>`;
 
@@ -82,26 +76,28 @@ db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID])
         // creates a ticket for each instance of ticket purchased
         // qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, item.item_id, "tickets/qr_code/"));
         msgTickets += `<p><br><table style="border: 2px dashed #322f32; padding: 2px; width: 700px;">
-        <tr><td rowspan=4 style="text-align: center;vertical-align: middle; width: 200px"><img src="cid:qrc_${item.item_id}.png" /></td></tr>
+        <tr><td rowspan=4 style="text-align: center;vertical-align: middle; width: 200px"><img src="cid:qrc_${item.item_id}_${i}.png" /></td></tr>
         <tr><td><b>${item.title}</b></td><td style="text-align: right"><b>${item.str_event_date} ${item.str_event_time}</b></td></tr>
         <tr><td colspan=2 style="vertical-align: top">${item.venue}</td></tr>
         <tr><td colspan=2 style="vertical-align: top">${item.address}<br>${item.city}-${item.province}</td></tr>
         </table><br>Please present this ticket for admission</p>`;
 
         attachments.push({
-          filename: `qrc_${item.item_id}.png`,
-          path: `tickets/qr_code/qrc_${item.item_id}.png`,
-          cid: `qrc_${item.item_id}.png`
+          filename: `qrc_${item.item_id}_${i}.png`,
+          path: `tickets/qr_code/qrc_${item.item_id}_${i}.png`,
+          cid: `qrc_${item.item_id}_${i}.png`
           });
       }
-    })
+    });
 
-    msgReceipt += `</tbody></table><p><br></p></div>`;
+    msgReceipt += `</tbody><tfoot>
+      <tr><td colspan=3>Total</td><td style="text-align: right">$ ${(amount/100).toFixed(2)}</td>
+      </tr></tfoot></table><p><br></p></div>`;
 
-    msgTickets += `</div>`
+    msgTickets += `</div></body></html>`
     
     // console.log(msgReceipt)
-
+// "lakondo@deloitte.ca"
     sendMsg("tbalmeida@gmail.com", "Tickets 4 Good - Receipt", "Receipt from Tickets 4 Good", msgGreetings + msgReceipt + msgTickets, attachments);
 // console.log(msgGreetings + msgReceipt + msgTickets)
   })
