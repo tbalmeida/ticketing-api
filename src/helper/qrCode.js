@@ -10,8 +10,8 @@ function getNewQRCode(data, id, path = './tickets/qr_code') {
       light: '#ffffffff',
       type: 'image/png',
       errorCorrectionLevel: 'L',
-      margin: 2,
-      scale: 2
+      margin: 1,
+      width: 300
     }
   }, (err) => {
     if (err) throw err
