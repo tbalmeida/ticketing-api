@@ -16,7 +16,6 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^7.0.0",
-    "ejs": "^3.0.1",
     "express": "^4.16.4",
     "googleapis": "^48.0.0",
     "helmet": "^3.18.0",

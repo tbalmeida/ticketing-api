@@ -42,5 +42,3 @@ module.exports = function createTicket(order) {
 
   doc.end();
 }
-
-// createTicket(2);

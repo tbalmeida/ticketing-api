@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const paymentIntent = require('./payment_intent');
 const ENV = require("../../environment");
-// const sendMsg = require( "../../helper/emailHelper");
 
 module.exports = db => {
 

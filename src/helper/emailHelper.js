@@ -6,8 +6,8 @@ function sendMsg (to, subject, text, HTML, arrayAttach =[]) {
 	const transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
-		user: process.env.EMAIL || 'ticketing4good@gmail.com', 
-		pass: process.env.PASSWORD || 'FinalProject'
+		user: process.env.EMAIL, 
+		pass: process.env.PASSWORD
 		}
 	});
 	
@@ -46,7 +46,6 @@ function textReceipt(data) {
 	msgReceipt += `\n\n\nOrder Total: $${orderTotal}\n\n\nThis is not your ticket`
 
 	return msgReceipt;
-// sendMsg('tbalmeida@gmail.com', `Order ${orders[0].order_id}`, conf_Msg)
 };
 
 function htmlReceipt(data) {
@@ -70,7 +69,6 @@ function htmlReceipt(data) {
 	`<tr><tfoot><td colspan=4><i>This is not a ticket</i></td></tr></tfoot></table>`
 
 	return msgReceipt;
-// sendMsg('tbalmeida@gmail.com', `Order ${orders[0].order_id}`, conf_Msg)
 };
 
 function createReceipt(order, qtyItems, amount) {
@@ -121,7 +119,6 @@ function createReceipt(order, qtyItems, amount) {
 
 		for (let i = 1; i <= item.qty; i++) {
 			// creates a ticket for each instance of ticket purchased
-			// qrCodes.push(getNewQRCode(item.qr_code + `|${i}|${item.qty}`, item.item_id, "tickets/qr_code/"));
 			msgTickets += `<p><br><table style="border: 2px dashed #322f32; padding: 2px; width: 700px;">
 			<tr><td rowspan=4 style="text-align: center;vertical-align: middle; width: 200px"><img src="cid:qrc_${item.item_id}_${i}.png" /></td></tr>
 			<tr><td><b>${item.title}</b></td><td style="text-align: right"><b>${item.str_event_date} ${item.str_event_time}</b></td></tr>
@@ -140,7 +137,7 @@ function createReceipt(order, qtyItems, amount) {
 	// finalize html
 	msgReceipt += `</tbody><tfoot>
 	<tr><td><b>Total</b></td>
-		<td style="text-align: right"><b> ${qtyItems}</b></td>
+		<td style="text-align: center"><b> ${qtyItems}</b></td>
 		<td style="text-align: right" colspan=2><b>$ ${(amount/100).toFixed(2)}</b></td>
 	</tr></tfoot></table><p><br></p></div>`;
 

@@ -1,10 +1,8 @@
 const router = require("express").Router();
-const sendMsg = require( "../../helper/emailHelper");
 
 module.exports = db => {
   // route to get all the events
   router.get("/events", (request, response) => {
-    console.log(request.body);
     db.query(`SELECT * FROM events_vw WHERE event_date >= now()`)
     .then(({ rows: events }) => {response.status(200).json(events);})
     .catch(e => console.error(e.stack));
@@ -12,7 +10,6 @@ module.exports = db => {
 
   // gets info about one event
   router.get("/events/:id", (request, response) => {
-    console.log(request.params);
     db.query(`
       SELECT *
       FROM events_vw
@@ -53,7 +50,6 @@ module.exports = db => {
 
   // Creates a new event
   router.post("/events/new", (request, response) => {
-    console.log("here", request.body)
     db.query(`
       INSERT INTO events (title, description, event_date, event_time, duration, venue, total_issued, limit_per_user, price, url_image )
         VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -73,7 +69,6 @@ module.exports = db => {
 
   // delete an event
   router.delete("/events/:id", (request, response) => {
-    console.log(request.params)
     db.query(`
       DELETE FROM events WHERE id = $1;
       `, [ request.params.id ])

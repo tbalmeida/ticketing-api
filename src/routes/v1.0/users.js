@@ -6,10 +6,8 @@ module.exports = db => {
   // Signup: creates a new user only if the email isn't registered already
   router.put("/signup", async (request, response) => {
     const hashedPassword = await bcrypt.hash(request.body.password, 12)
-    // console.log("hashedPassword", hashedPassword)
     db.query(`SELECT COUNT(id) AS total FROM users WHERE email = $1`, [request.body.email])
     .then(({rows}) => {
-      console.log("Email occurances in DB: ", rows[0].total); 
       if (rows[0].total == 0) {
         db.query(`INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *;`, 
           [request.body.first_name, request.body.last_name, request.body.email, hashedPassword])
@@ -27,14 +25,14 @@ module.exports = db => {
     const user = await db.query(`SELECT handle, id, first_name, last_name, email, password FROM users WHERE email = $1;`
     , [request.body.email ]);
   
-    if(user.rowCount > 0){
+    if(user.rowCount > 0) {
       const isPasswordMatched = await bcrypt.compare(request.body.password, user.rows[0].password);
       if (isPasswordMatched) {
         return response.status(200).json(user.rows);
       } 
     }
     // user not found/match, return error
-    return response.status(500).json({message: "User not found. Please, verify the email and password provided."})
+    return response.status(500).json({message: "User not found. Please, verify the email and password provided."});
   });
 
   // User update

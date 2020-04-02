@@ -1,22 +1,57 @@
-# Ticketing API
+# Ticketing 4 Good
 
-WORKING DOCUMENT - the instructions still are the ones from the boilerplate
+Ticketing 4 Good is a final project developed at (Lighthouse Labs Web Bootcamp)[https://www.lighthouselabs.ca/web-bootcamp]- 2020-01 YYC Cohort. It was developed with Anton Smirnov (@antosha-85).
+
+Its objective is to provide NGOs a way to sell tickets using their own website and layout of preference, with a low cost.
+
+The way it functions is simple: USERS can buy (or get, if they're free) TICKETS to EVENTS hosted on VENUES. 
+
+Each ticket has a unique QR code that will be scanned to grant access to the event. 
+
+## Stack
+
+### Backend
+- (Node.js Express)[https://expressjs.com/]
+- (PostgreSQL)[https://www.postgresql.org/]
+- (Stripe)[https://stripe.com/]
+
+### Frontend
+- (React)[https://reactjs.org/]
+- (MaterialUI)[http://material-ui.com/]
+
+## Components
+
+T4G is a RESTful API and its full solution requires:
+
+- this API;
+- a front-end - we have our own (here)[https://github.com/tbalmeida/ticketing-client];
+- a scanning application to read the tickets (QR code).
+
 
 ## Setup
 
 Install dependencies with `npm install`.
+
+Make sure you have:
+- A PostgreSQL server;
+- A Stripe account
+- An e-mail account ready to use (after all, this API will send e-mails with the tickets)
+
 
 ## Run The Server
 
 ```sh
 npm start
 ```
-
+or with nodemon
+```sh
+npm run dev
+```
 ## Creating The DB
 
-Use the `psql -U development` command to login to the PostgreSQL server with the username `development` and the password `development`. This command **MUST** be run in a vagrant terminal, we are using the PostgreSQL installation provided in the vagrant environment.
+Use the `psql -U development` command to login to the PostgreSQL server with the username `development` and the password `development`. 
 
-Create a database with the command `CREATE DATABASE scheduler_development;`.
+Create a database with the command `CREATE DATABASE ticketing_development;`.
 
 Copy the `.env.example` file to `.env.development` and fill in the necessary PostgreSQL configuration. The `node-postgres` library uses these environment variables by default.
 
@@ -26,98 +61,65 @@ PGUSER=development
 PGDATABASE=ticketing_development
 PGPASSWORD=development
 PGPORT=5432
+EMAIL=
+PASSWORD=
+PUBLISHABLE_KEY=
+SECRET_KEY=
 ```
 
 ## Seeding
 
-Run a the development server with `npm start` in the Host environment. We are only using vagrant for `psql` this week.
-
-Both of these achieve the same result.
+Run a the development server with `npm start` and use one of these two options; both of these achieve the same result.
 
 - Make a `GET` request to `/api/debug/reset` with `curl http://localhost:8001/api/debug/reset`.
 - Use the browser to navigate to `http://localhost:8001/api/debug/reset`.
 
-The `development` data is random. Each time we seed we expect to see different appointments.
 
-## Api
+## API
+The resourses available are as follows.
 
-### Days
+### v 1.0
+This is the version for demo purposes. 
 
-`GET /api/days`
+#### Venues
+- [x] Add
+- [x] Update
+- [x] Delete
+- [x] List
 
-Response
+A small set of venues in Calgary is available on the database.
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Monday",
-    "appointments": [1, 2],
-    "interviewers": [1, 2],
-    "spots": 0
-  }
-]
-```
+#### Events
+- [x] Add
+- [x] Update
+- [x] Delete
+- [x] List
+- [ ] Attendance report
+- [ ] Finantial result
 
-### Appointments
+A fictional set of events is provided as example.
 
-`GET /api/appointments`
+#### Users
+- [x] Signup
+- [x] Login
+- [x] Update (endpoint)
+- [ ] Profile
+- [ ] Order history
 
-Response:
+#### Orders
+- [x] Checkout
+- [x] E-mail confirmation
+- [X] Unique QR Code tickets by e-mail
+- [ ] PDF tickets
+- [ ] Export finantial data 
 
-```json
-{
-  "1": {
-    "id": 1,
-    "time": "12pm",
-    "interview": {
-      "student": "Lydia Miller-Jones",
-      "interviewer": 1
-    }
-  },
-  "2": {
-    "id": 2,
-    "time": "1pm",
-    "interview": {
-      "student": "Archie Cohen",
-      "interviewer": 2
-    }
-  }
-}
-```
+## To Do
 
-`PUT /api/appointments/:id`
+The version published on April 2nd 2020 is a working MVD. At the moment, it is available only for educational purposes.
 
-Body:
+The following items will be completed to provide a full solution.
 
-```json
-{
-  "interview": {
-    "student": String,
-    "interviewer": Number
-  }
-}
-```
-
-`DELETE /api/appointments/:id`
-
-### Interviewers
-
-`GET /api/interviewers`
-
-Response:
-
-```json
-{
-  "1": {
-    "id": 1,
-    "name": "Sylvia Palmer",
-    "avatar": "https://i.imgur.com/LpaY82x.png"
-  },
-  "2": {
-    "id": 2,
-    "name": "Tori Malcolm",
-    "avatar": "https://i.imgur.com/Nmx0Qxo.png"
-  }
-}
-```
+-[ ] API documentation
+-[ ] Automated tests
+-[ ] Admin front-end
+-[ ] Scanning app

@@ -1,7 +1,6 @@
 const Stripe = require("stripe");
 const db = require("../../db");
-// const createTicket = require("../../helper/ticket");
-const { sendMsg, textReceipt, htmlReceipt, createReceipt } = require( "../../helper/emailHelper");
+const { createReceipt } = require( "../../helper/emailHelper");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
 
@@ -9,8 +8,6 @@ module.exports = async (req, res) => {
   if (req.method === "POST") {
     try {
       const { amount, cartItems, handle } = req.body;
-      // console.log("req.body", cartItems)
-
       // gets the user.id to create an order
       const vUser = await db.query('SELECT id, email FROM users WHERE handle = $1', [handle])
 
@@ -44,18 +41,10 @@ module.exports = async (req, res) => {
         });
         sqlOrderItems = `INSERT INTO order_items (order_id, event_id, qty) VALUES ` + sqlOrderItems + `;`
         const vOrderItems = await db.query(sqlOrderItems);
-        // console.log(sqlOrderItems);
-
         
         const order = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1`, [orderID]);
         createReceipt(order.rows, qtyItems, amount);
         
-        // email confirmation
-        // const orderDetails = await db.query(`SELECT * FROM order_details_vw WHERE order_id = $1 ORDER BY event_date ASC;`, [orderID])
-        // const textMsg = textReceipt(orderDetails.rows);
-        // const htmlMsg = htmlReceipt(orderDetails.rows);
-        // sendMsg(userEmail, 'Ticketing 4 Good - Your order', textMsg, htmlMsg);
-
         res.status(200).send(paymentIntent.client_secret);
 
       } else {
@@ -63,7 +52,6 @@ module.exports = async (req, res) => {
       }
 
     } catch (err) {
-      console.log("err", err)
       res.status(500).json({ statusCode: 500, message: err.message });
     }
 
