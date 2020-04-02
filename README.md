@@ -1,6 +1,6 @@
 # Ticketing 4 Good
 
-Ticketing 4 Good is a final project developed at (Lighthouse Labs Web Bootcamp)[https://www.lighthouselabs.ca/web-bootcamp]- 2020-01 YYC Cohort. It was developed with Anton Smirnov (@antosha-85).
+Ticketing 4 Good is a final project developed at [Lighthouse Labs Web Bootcamp](https://www.lighthouselabs.ca/web-bootcamp)- 2020-01 YYC Cohort. It was developed with Anton Smirnov (@antosha-85).
 
 Its objective is to provide NGOs a way to sell tickets using their own website and layout of preference, with a low cost.
 
@@ -11,20 +11,20 @@ Each ticket has a unique QR code that will be scanned to grant access to the eve
 ## Stack
 
 ### Backend
-- (Node.js Express)[https://expressjs.com/]
-- (PostgreSQL)[https://www.postgresql.org/]
-- (Stripe)[https://stripe.com/]
+- [Node.js Express](https://expressjs.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Stripe](https://stripe.com/)
 
 ### Frontend
-- (React)[https://reactjs.org/]
-- (MaterialUI)[http://material-ui.com/]
+- [React](https://reactjs.org/)
+- [MaterialUI](http://material-ui.com/)
 
 ## Components
 
 T4G is a RESTful API and its full solution requires:
 
 - this API;
-- a front-end - we have our own (here)[https://github.com/tbalmeida/ticketing-client];
+- a front-end - we have our own [here](https://github.com/tbalmeida/ticketing-client);
 - a scanning application to read the tickets (QR code).
 
 
@@ -116,7 +116,6 @@ A fictional set of events is provided as example.
 ## To Do
 
 The version published on April 2nd 2020 is a working MVD. At the moment, it is available only for educational purposes.
-
 The following items will be completed to provide a full solution.
 
 -[ ] API documentation
