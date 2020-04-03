@@ -118,7 +118,7 @@ A fictional set of events is provided as example.
 The version published on April 2nd 2020 is a working MVD. At the moment, it is available only for educational purposes.
 The following items will be completed to provide a full solution.
 
--[ ] API documentation
--[ ] Automated tests
--[ ] Admin front-end
--[ ] Scanning app
+- [ ] API documentation
+- [ ] Automated tests
+- [ ] Admin front-end
+- [ ] Scanning app
