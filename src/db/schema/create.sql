@@ -77,7 +77,9 @@ CREATE TABLE events (
   limit_per_user SMALLINT,
   price MONEY NOT NULL,
   handle VARCHAR(6) DEFAULT 'e' || md5handle(5),
-  url_image VARCHAR(300) NULL
+  url_image VARCHAR(300) NULL,
+  lat REAL NOT NULL, 
+  lng REAL NOT NULL
 );
 
 CREATE TABLE users (

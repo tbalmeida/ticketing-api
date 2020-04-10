@@ -4,7 +4,6 @@ module.exports = db => {
 
   // Signup: creates a new user only if the email isn't registered already
   router.put("/signup", (request, response) => {
-    console.log("Request body:", request.body);
     db.query(`SELECT COUNT(id) AS total FROM users WHERE email = $1`, [request.body.email])
     .then(({rows}) => {
       console.log("Email occurances in DB: ", rows[0].total); 
@@ -21,7 +20,6 @@ module.exports = db => {
 
   // User login
   router.post("/login", (request, response) => {
-    console.log("Request body:", request.body);
     db.query(`SELECT handle, id, first_name, last_name, email FROM users WHERE email = $1 and password = $2;`
       , [ request.body.email, request.body.password ])
     .then(({ rows: users }) => {

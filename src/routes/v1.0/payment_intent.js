@@ -9,7 +9,6 @@ module.exports = async (req, res) => {
   if (req.method === "POST") {
     try {
       const { amount, cartItems, handle } = req.body;
-      // console.log("req.body", cartItems)
 
       // gets the user.id to create an order
       const vUser = await db.query('SELECT id, email FROM users WHERE handle = $1', [handle])
@@ -42,7 +41,6 @@ module.exports = async (req, res) => {
           sqlOrderItems += `( ${orderID}, ${id}, ${quantity})`
         });
         sqlOrderItems = `INSERT INTO order_items (order_id, event_id, qty) VALUES ` + sqlOrderItems + `;`
-        // console.log(sqlOrderItems);
 
         const vOrderItems = await db.query(sqlOrderItems);
 

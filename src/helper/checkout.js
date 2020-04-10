@@ -1,7 +1,6 @@
 const Stripe = require("stripe");
 
 const stripe = new Stripe(process.env.SECRET_KEY);
-// console.log("stripe", stripe)
 
 function processPayment(amount) {
   try {
@@ -14,7 +13,6 @@ function processPayment(amount) {
 
     return paymentIntent.client_secret;
   } catch (err) {
-    console.log("err", err)
     return { statusCode: 500, message: err.message };
   }
 }

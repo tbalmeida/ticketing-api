@@ -19,27 +19,3 @@ function getNewQRCode(data, id, path = './qr_code/') {
 }
 
 module.exports = { getNewQRCode };
-
-
-// option: Using Denso API
-// const https = require('https')
-// const options = {
-//   hostname: 'api.qrserver.com',
-//   port: 443,
-//   path: '/v1/create-qr-code/?size=150x150&data=3@U17984583336FE1C7394AF8160',
-//   method: 'GET'
-// }
-
-// const req = https.request(options, res => {
-//   console.log(`statusCode: ${res.statusCode}`)
-
-//   res.on('data', d => {
-//     process.stdout.write(d)
-//   })
-// })
-
-// req.on('error', error => {
-//   console.error(error)
-// })
-
-// req.end()

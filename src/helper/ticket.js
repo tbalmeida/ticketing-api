@@ -11,10 +11,7 @@ function createTicket(orderID) {
   .then(({rows: order}) => {
 
     if (order.length > 0) {
-      console.log(order)
       order.forEach(item => {
-        console.log(item.title);
-
       })
 
     } else {
@@ -22,8 +19,6 @@ function createTicket(orderID) {
     }
   })
   .catch( err => {
-    console.log(err.stack);
-
   });
 return true
 
