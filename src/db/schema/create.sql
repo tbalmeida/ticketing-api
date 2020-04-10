@@ -131,6 +131,8 @@ CREATE OR REPLACE VIEW events_vw
     e.total_issued,
     e.limit_per_user,
     e.price,
+    e.lat,
+    e.lng,
     e.url_image AS event_img,
     v.id AS venue_id,
     v.name AS venue_name,
