@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS users CASCADE;
 -- FUNCTIONS
 DROP FUNCTION IF EXISTS getpercent(INTEGER, INTEGER);
 DROP FUNCTION IF EXISTS md5handle(INTEGER);
+DROP FUNCTION IF EXISTS getRemainingTickets(INTEGER);
 
 -- Functions
   -- used to calculate % of capacity used and % of tickets sold
@@ -48,6 +49,23 @@ AS $BODY$
            1,
            CEIL($1 / 32.)::INTEGER) 
        ), 1, $1) );
+$BODY$;
+
+-- used to return the quantity of remaining tickets
+CREATE OR REPLACE FUNCTION getRemainingTickets(pid integer)
+  RETURNS numeric
+  LANGUAGE 'plpgsql'
+  AS $BODY$
+    DECLARE result NUMERIC;
+    BEGIN
+      SELECT total_issued - SUM(oi.qty) INTO result
+      FROM order_items oi
+      INNER JOIN events e ON e.id = oi.event_id
+      WHERE e.id = pid
+      GROUP BY oi.event_id, total_issued;
+
+      RETURN result;
+    END
 $BODY$;
 
 -- CREATING TABLES
@@ -126,6 +144,7 @@ CREATE OR REPLACE VIEW events_vw
     e.event_date,
     e.event_time,
     e.duration,
+    getRemainingTickets(e.id) AS ticket_available;
     e.total_issued,
     e.limit_per_user,
     e.price,
