@@ -80,7 +80,9 @@ CREATE TABLE venues (
   address VARCHAR(300) NULL,
   city VARCHAR(50) NULL,
   province CHAR(2) NULL,
-  address_url VARCHAR(200) NULL
+  address_url VARCHAR(200) NULL,
+  latitude REAL NOT NULL, 
+  longitude REAL NOT NULL
 );
 
 CREATE TABLE events (
@@ -137,14 +139,14 @@ CREATE TABLE attendance (
 
 -- Views
 CREATE OR REPLACE VIEW events_vw
- AS
- SELECT e.id AS event_id,
+AS
+SELECT e.id AS event_id,
     e.title,
     e.description AS event_description,
     e.event_date,
     e.event_time,
     e.duration,
-    getRemainingTickets(e.id) AS ticket_available;
+    getRemainingTickets(e.id) AS ticket_available,
     e.total_issued,
     e.limit_per_user,
     e.price,
@@ -158,9 +160,10 @@ CREATE OR REPLACE VIEW events_vw
     e.total_issued * e.price AS max_revenue,
     v.info_url, v.address, v.city, v.province, v.address_url,
     TO_CHAR(e.event_date, 'MON-dd-yyyy') as str_event_date,
-    TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time
-   FROM events e
-     JOIN venues v ON e.venue = v.id
+    TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time,
+    latitude AS lat, longitude AS lgn
+  FROM events e
+  INNER JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;
 
 -- here
