@@ -161,7 +161,7 @@ SELECT e.id AS event_id,
     v.info_url, v.address, v.city, v.province, v.address_url,
     TO_CHAR(e.event_date, 'MON-dd-yyyy') as str_event_date,
     TO_CHAR(e.event_time, 'hh12:MI PM') as str_event_time,
-    latitude AS lat, longitude AS lgn
+    latitude AS lat, longitude AS lng
   FROM events e
   INNER JOIN venues v ON e.venue = v.id
   ORDER BY e.event_date DESC, v.name;

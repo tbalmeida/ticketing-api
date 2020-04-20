@@ -4,7 +4,7 @@ module.exports = db => {
   // route to get all the venues
   router.get("/venues", (request, response) => {
     db.query(`
-      SELECT id, name, description, capacity, hourly_fee, info_url, address_url, address, city, province
+      SELECT id, name, description, capacity, hourly_fee, info_url, address_url, address, city, province, latitude AS lat, longitude AS lng
       FROM venues
       ORDER BY name ASC
      `)
@@ -17,7 +17,7 @@ module.exports = db => {
   // get an especific venue
   router.get("/venues/:id", (request, response) => {
     db.query(`
-      SELECT id, name, description, capacity, hourly_fee, info_url, address, city, province, address_url
+      SELECT id, name, description, capacity, hourly_fee, info_url, address, city, province, address_url, latitude AS lat, longitude AS lng
       FROM venues
       WHERE id = $1::integer
      `, [request.params.id])
@@ -43,7 +43,7 @@ module.exports = db => {
   // Create a new venue
   router.put("/venues/new", (request, response) => {
     db.query(`
-      INSERT INTO venues (name, description, capacity, hourly_fee, info_url, address, city, province, address_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO venues (name, description, capacity, hourly_fee, info_url, address, city, province, address_url, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *;
       `, [request.body.name, 
           request.body.description, 
@@ -53,7 +53,10 @@ module.exports = db => {
           request.body.address,
           request.body.city,
           request.body.province,
-          request.body.address_url ])
+          request.body.address_url,
+          request.body.lat,
+          request.body.lng
+        ])
     .then(({ rows: venues }) => {
       response.status(201).json(venues);
     })
@@ -76,7 +79,10 @@ module.exports = db => {
           request.body.address,
           request.body.city,
           request.body.province,
-          request.body.address_url ])
+          request.body.address_url,
+          request.body.lat,
+          request.body.lng
+        ])
     .then(({ rows: venues }) => {
       response.status(200).json(venues);
     })
