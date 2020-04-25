@@ -8,6 +8,8 @@ The way it functions is simple: USERS can buy (or get, if they're free) TICKETS 
 
 Each ticket has a unique QR code that will be scanned to grant access to the event. 
 
+A live version can be viewed [here](https://ticketing4good.netlify.app/)
+
 ## Stack
 
 ### Backend
