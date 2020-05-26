@@ -3,30 +3,42 @@ const {getNewQRCode} = require("./qrCode");
 
 function sendMsg (to, subject, text, HTML, arrayAttach =[]) {
 	
-	const transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-		user: process.env.EMAIL, 
-		pass: process.env.PASSWORD
-		}
-	});
-	
-	const mailOptions = {
-		from: process.env.EMAIL, 
+	const sgMail = require('@sendgrid/mail');
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+	const msg = {
 		to: to,
-		bcc: 'ticketing4good@gmail.com',
+		from: 'ticketing4good@gmail.com',
 		subject: subject,
 		text: text,
 		html: HTML,
-		attachments: arrayAttach
 	};
+	sgMail.send(msg);
+
 	
-	transporter.sendMail(mailOptions, (err, data) => {
-		if (err) {
-			return console.log('Error:', err);
-		}
-			return console.log('Email sent!');
-	});
+	// const transporter = nodemailer.createTransport({
+	// 	service: 'gmail',
+	// 	auth: {
+	// 	user: process.env.EMAIL, 
+	// 	pass: process.env.PASSWORD
+	// 	}
+	// });
+	
+	// const mailOptions = {
+	// 	from: process.env.EMAIL, 
+	// 	to: to,
+	// 	bcc: 'ticketing4good@gmail.com',
+	// 	subject: subject,
+	// 	text: text,
+	// 	html: HTML,
+	// 	attachments: arrayAttach
+	// };
+	
+	// transporter.sendMail(mailOptions, (err, data) => {
+	// 	if (err) {
+	// 		return console.log('Error:', err);
+	// 	}
+	// 		return console.log('Email sent!');
+	// });
 };
 
 function textReceipt(data) {

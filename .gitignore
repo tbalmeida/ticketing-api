@@ -5,3 +5,4 @@
 .env.test
 node_modules/
 coverage/
+sendgrid.env
