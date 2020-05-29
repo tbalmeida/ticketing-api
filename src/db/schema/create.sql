@@ -52,15 +52,15 @@ AS $BODY$
 $BODY$;
 
 -- used to return the quantity of remaining tickets
-CREATE OR REPLACE FUNCTION getRemainingTickets(pid integer)
+  CREATE OR REPLACE FUNCTION getRemainingTickets(pid integer)
   RETURNS numeric
   LANGUAGE 'plpgsql'
   AS $BODY$
     DECLARE result NUMERIC;
     BEGIN
-      SELECT total_issued - SUM(oi.qty) INTO result
-      FROM order_items oi
-      INNER JOIN events e ON e.id = oi.event_id
+      SELECT total_issued - COALESCE(SUM(oi.qty), 0) INTO result
+      FROM events e
+      LEFT JOIN order_items oi ON e.id = oi.event_id
       WHERE e.id = pid
       GROUP BY oi.event_id, total_issued;
 
